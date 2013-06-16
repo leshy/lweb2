@@ -25,6 +25,8 @@ exports.basic = (test) ->
     # not sure, lets leave streaming for later..
     lwebc.query(bla: 3).stream().on { response: true}, (err,data) ->
         true
-
-
     
+    # please check login conversation implementation on top of comm5, to see what kind of API would be nice
+
+
+

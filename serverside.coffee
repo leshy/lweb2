@@ -7,7 +7,6 @@ _ = require 'underscore'
 # inherit code common to serverside and clientside
 _.extend exports, require './shared'
 
-
 # this is the core.. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.. db is a bottleneck then, but I can distribute that too
 ChannelServer = Backbone.Model.extend4000
     initialize: ->
@@ -41,4 +40,6 @@ WebsocketServer = exports.WebsocketServer = Backbone.Model.extend4000
                     console.log 'msg',JSON.stringify(msg)
                                         
             true
+
+
 
