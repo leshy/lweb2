@@ -20,16 +20,19 @@ Channel = exports.Channel = shared.SubscriptionMan2.extend4000
     del: -> @part()
 
 ChannelClient = Backbone.Model.extend4000
+    initialize: ->
+        @channels = {}
+        
     channel: (channelname) ->
         if channel = @channels[channelname] then return channel
         channel = @channels[channelname] = new Channel lweb: @, name: channelname
         channel.on 'del', => delete @channels[channelname]
         return channel
+        
+lweb = exports.lweb = shared.SubscriptionMan2.extend4000 ChannelClient,
+    connect: (host = "http://" + window.location.host) ->
+        @socket = io.connect host
 
-lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelClient,
-    initialize: ->
-        @channels = {}
-    connect: (host = "http://" + window.location.host) -> @socket = io.connect host
-    once: (args...) -> @socket.once.apply @socket, args
-    on: (args...) -> @socket.on.apply @socket, args
-    emit: (args...) -> @socket.once.apply @socket, args
+    query: ->
+        true
+

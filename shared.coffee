@@ -30,7 +30,17 @@ channelInterface = exports.channelInterface = Backbone.Model.extend4000
     part: (channel,listener) -> true
     del: -> true
 
-lwebInterface = exports.lwebInterface = SubscriptionMan2.extend4000
-    initialize: -> true
-    query: (msg) -> true
+queryNode = exports.queryNode = Backbone.Model.extend4000
+    initialize: -> 
+        @queries = {}
+        
+        @socket.on 'query', (msg) => @event msg
 
+        @socket.on 'queryreply', (msg) =>
+            @queries[msg.id](msg.payload)
+            if msg.end then delete @queries[msg.id]
+
+    query: (msg,callback) ->
+        id = helpers.uuid(10)
+        @queries[id] = callback
+        @socket.emit 'query', { id: id, payload: msg }

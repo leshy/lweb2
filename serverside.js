@@ -23,7 +23,7 @@
       var _this = this;
       this.clients[client.id] = client;
       return client.on('disconnect', function() {
-        return _this.unsubscribe(client);
+        return _this.part(client);
       });
     },
     part: function(client) {
@@ -81,7 +81,7 @@
     }
   });
 
-  lweb = exports.lweb = shared.lwebInterface.extend4000(ChannelServer, {
+  lweb = exports.lweb = shared.SubscriptionMan2.extend4000(ChannelServer, {
     listen: function(http) {
       var loopy, options,
         _this = this;
@@ -103,7 +103,7 @@
       });
       loopy = function() {
         _this.broadcast('testchannel', {
-          ping: new Date().getTime()
+          ping: helpers.uuid()
         });
         return helpers.sleep(1000, loopy);
       };

@@ -13,7 +13,7 @@ Channel = shared.SubscriptionMan2.extend4000
 
     join: (client) ->
         @clients[client.id] = client
-        client.on 'disconnect', => @unsubscribe client
+        client.on 'disconnect', => @part client
         
     part: (client) ->
         delete @clients[client.id]
@@ -47,7 +47,7 @@ ChannelServer = shared.channelInterface.extend4000
         if not channel = @channels[channelname] then return
         channel.part socket
 
-lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
+lweb = exports.lweb = shared.SubscriptionMan2.extend4000 ChannelServer,
     listen: (http = @get 'http', options = @get 'options') ->
         @server = io.listen(http, options or {})
 
@@ -60,8 +60,9 @@ lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
             client.on 'part', (msg) => @part msg.channel, client
 
         loopy = =>
-            @broadcast 'testchannel', ping: new Date().getTime()
+            @broadcast 'testchannel', ping: helpers.uuid()
             helpers.sleep 1000, loopy
             
         loopy()
 
+        
