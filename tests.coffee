@@ -32,9 +32,6 @@ exports.basic = (test) ->
     # lets leave this for laters... keep it as simple as possible.
 
 
-
-
-
 exports.SimpleSubscriptionMan = (test) ->
     a = new shared.SubscriptionMan()
     a.subscribe { bla: true }, (msg) -> test.done()

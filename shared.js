@@ -28,6 +28,10 @@
       return this.subscriptions = [];
     },
     subscribe: function(pattern, callback, name) {
+      if (!callback && pattern.constructor === Function) {
+        callback = pattern;
+        pattern = true;
+      }
       return this.subscriptions.push({
         pattern: pattern,
         callback: callback

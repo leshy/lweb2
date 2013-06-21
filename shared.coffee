@@ -13,7 +13,11 @@ SimpleMatcher = Backbone.Model.extend4000
 SubscriptionMan = exports.SubscriptionMan = SimpleMatcher.extend4000
     initialize: -> @subscriptions = []
 
-    subscribe: (pattern,callback,name) -> @subscriptions.push pattern: pattern, callback: callback
+    subscribe: (pattern,callback,name) ->
+        if not callback and pattern.constructor is Function
+            callback = pattern
+            pattern = true
+        @subscriptions.push pattern: pattern, callback: callback
     
     event: (value) ->
         subscriptions = _.filter @subscriptions, (subscription) => @match value, subscription.pattern
