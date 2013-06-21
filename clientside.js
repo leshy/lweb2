@@ -57,19 +57,23 @@
         return delete _this.channels[channelname];
       });
       return channel;
+    },
+    subscribe: function(channelname, pattern, callback) {
+      var channel;
+      channel = this.channel(channelname);
+      if (!callback && pattern.constructor === Function) {
+        callback = pattern;
+        pattern = true;
+      }
+      return channel.subscribe(pattern, callback);
     }
   });
 
   lweb = exports.lweb = ChannelClient.extend4000(shared.queryClient, shared.queryServer, {
     initialize: function() {
-      return window.lweb = this;
-    },
-    connect: function(host) {
       var _this = this;
-      if (host == null) {
-        host = "http://" + window.location.host;
-      }
-      this.socket = io.connect(host);
+      window.lweb = this;
+      this.socket = io.connect(this.get('host') || "http://" + window.location.host);
       this.socket.on('query', function(msg) {
         return _this.queryReceive(msg, _this.socket);
       });

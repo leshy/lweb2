@@ -41,7 +41,6 @@ class Response
         msg.id = @id
         if payload then msg.payload = payload
         if end then msg.end = true
-        console.log "EMMITING REPLY",msg
         msg
         
     write: (payload) ->
@@ -63,20 +62,17 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
     query: (msg,callback) ->
         id = helpers.uuid(10)
         @queries[id] = callback
-        console.log 'emitting query!'
         @socket.emit 'query', { id: id, payload: msg }
 
 queryServer = exports.queryServer = SubscriptionMan2.extend4000
 
     queryReceive: (msg,client) ->
-        console.log "RECEIVE QUERY PRELIMINARY",msg
         if not msg.payload or not msg.id then return console.warn 'invalid query message received:',msg
         @event msg.payload, msg.id, client
                         
     subscribe: ( pattern, callback ) ->
         if not callback and pattern.constructor is Function then callback = pattern and pattern = true
-        wrapped = (msg, id, client) -> callback msg, new Response(id,client)
-                
+        wrapped = (msg, id, client) -> callback msg, new Response(id,client)                
         SubscriptionMan2::subscribe.call this, pattern, wrapped        
 
 

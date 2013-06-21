@@ -49,7 +49,10 @@ ChannelServer = shared.channelInterface.extend4000
         channel.part socket
 
 lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, shared.queryServer, ChannelServer,
-    listen: (http = @get 'http', options = @get 'options') ->
+    initialize: -> 
+        http = @get 'http'
+        options = @get 'options'
+        
         @server = io.listen(http, options or {})
 
         @server.on 'connection', (client) =>
@@ -60,14 +63,12 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
             client.on 'join', (msg) => @join msg.channel, client
             client.on 'part', (msg) => @part msg.channel, client
 
-            client.on 'query', (msg) =>
-                console.log 'received query',msg
-                @queryReceive msg, client
+            client.on 'query', (msg) => @queryReceive msg, client
             client.on 'reply', (msg) => @queryReplyReceive msg, client
 
         loopy = =>
             @broadcast 'testchannel', ping: helpers.uuid()
-            helpers.sleep 5000, loopy
+            helpers.sleep 10000, loopy
             
         loopy()
 

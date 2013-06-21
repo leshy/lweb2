@@ -89,7 +89,6 @@
       if (end) {
         msg.end = true;
       }
-      console.log("EMMITING REPLY", msg);
       return msg;
     };
 
@@ -122,7 +121,6 @@
       var id;
       id = helpers.uuid(10);
       this.queries[id] = callback;
-      console.log('emitting query!');
       return this.socket.emit('query', {
         id: id,
         payload: msg
@@ -132,7 +130,6 @@
 
   queryServer = exports.queryServer = SubscriptionMan2.extend4000({
     queryReceive: function(msg, client) {
-      console.log("RECEIVE QUERY PRELIMINARY", msg);
       if (!msg.payload || !msg.id) {
         return console.warn('invalid query message received:', msg);
       }

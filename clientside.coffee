@@ -28,13 +28,16 @@ ChannelClient = Backbone.Model.extend4000
         channel = @channels[channelname] = new Channel lweb: @, name: channelname
         channel.on 'del', => delete @channels[channelname]
         return channel
-                
+
+    subscribe: (channelname, pattern, callback) ->
+        channel = @channel(channelname)
+        if not callback and pattern.constructor is Function then callback = pattern; pattern = true
+        channel.subscribe pattern, callback
+        
 lweb = exports.lweb = ChannelClient.extend4000 shared.queryClient, shared.queryServer,
     initialize: ->
         window.lweb = @
-        
-    connect: (host = "http://" + window.location.host) ->
-        @socket = io.connect host
+        @socket = io.connect @get('host') or "http://" + window.location.host
         @socket.on 'query', (msg) => @queryReceive msg, @socket
         @socket.on 'reply', (msg) => @queryReplyReceive msg, @socket
                         

@@ -83,12 +83,11 @@
   });
 
   lweb = exports.lweb = shared.SubscriptionMan2.extend4000(shared.queryClient, shared.queryServer, ChannelServer, {
-    listen: function(http) {
-      var loopy, options,
+    initialize: function() {
+      var http, loopy, options,
         _this = this;
-      if (http == null) {
-        http = this.get('http', options = this.get('options'));
-      }
+      http = this.get('http');
+      options = this.get('options');
       this.server = io.listen(http, options || {});
       this.server.on('connection', function(client) {
         var host, id;
@@ -102,7 +101,6 @@
           return _this.part(msg.channel, client);
         });
         client.on('query', function(msg) {
-          console.log('received query', msg);
           return _this.queryReceive(msg, client);
         });
         return client.on('reply', function(msg) {
@@ -113,7 +111,7 @@
         _this.broadcast('testchannel', {
           ping: helpers.uuid()
         });
-        return helpers.sleep(5000, loopy);
+        return helpers.sleep(10000, loopy);
       };
       return loopy();
     }
