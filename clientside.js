@@ -11,7 +11,7 @@
 
   _.extend(exports, shared = require('./shared'));
 
-  Channel = exports.Channel = shared.channelInterface.extend4000({
+  Channel = exports.Channel = shared.SubscriptionMan.extend4000({
     initialize: function() {
       var _this = this;
       this.name = this.get('name' || (function() {
@@ -21,16 +21,23 @@
         throw 'channel needs lweb';
       })();
       this.socket.emit('subscribe', {
-        channel: channel
+        channel: this.name
       });
-      return this.socket.on(channel, function() {
-        return _this.emit(message);
+      return this.socket.on(this.name, function(msg) {
+        return _this.event(msg);
       });
     },
-    send: function() {}
+    unsubscribe: function() {
+      return this.socket.emit('unsubscribe', {
+        channel: this.name
+      });
+    },
+    del: function() {
+      return this.unsubscribe();
+    }
   });
 
-  lweb = exports.lweb = shared.lwebInterface.extend4000(ChannelClient, {
+  lweb = exports.lweb = shared.lwebInterface.extend4000({
     connect: function(host) {
       if (host == null) {
         host = "http://" + window.location.host;

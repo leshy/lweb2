@@ -20,10 +20,9 @@ Channel = shared.channelInterface.extend4000 # subscriberman in the future..
         delete @subscribers[client.id]
                 
     broadcast: (msg, exclude) ->
-        _.map @subscribers, (subscriber) => subscriber.emit(@name, msg) if not subscriber is exclude else undefined
+        _.map @subscribers, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
 
-    del: ->
-        @subscribers = {}
+    del: -> @subscribers = {}
 
 # this is the core.. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.. db is a bottleneck then, but I can distribute that too
 ChannelServer = shared.channelInterface.extend4000
@@ -67,3 +66,4 @@ exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
             helpers.sleep 1000, loopy
             
         loopy()
+

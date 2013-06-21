@@ -34,7 +34,9 @@
     broadcast: function(msg, exclude) {
       var _this = this;
       return _.map(this.subscribers, function(subscriber) {
-        return subscriber.emit(_this.name, msg)(!subscriber === exclude ? void 0 : void 0);
+        if (subscriber !== exclude) {
+          return subscriber.emit(_this.name, msg);
+        }
       });
     },
     del: function() {
