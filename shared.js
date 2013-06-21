@@ -11,14 +11,20 @@
       if (pattern === true) {
         return true;
       }
-      return true;
+      return !_.find(pattern, function(checkvalue, key) {
+        if (!value[key]) {
+          return true;
+        }
+        if (checkvalue !== true && value[key] !== checkvalue) {
+          return true;
+        }
+        return false;
+      });
     }
   });
 
   SubscriptionMan = exports.SubscriptionMan = SimpleMatcher.extend4000({
     initialize: function() {
-      var cnt;
-      cnt = 0;
       return this.subscriptions = [];
     },
     subscribe: function(pattern, callback, name) {

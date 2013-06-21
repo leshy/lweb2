@@ -1,3 +1,4 @@
+Backbone = require 'backbone4000'
 io = require 'socket.io-browserify'
 helpers = require 'helpers'
 _ = require 'underscore'
@@ -12,13 +13,23 @@ Channel = exports.Channel = shared.SubscriptionMan.extend4000
         @socket.emit 'subscribe', { channel: @name }
         @socket.on @name, (msg) => @event msg
 
-    unsubscribe: -> @socket.emit 'unsubscribe', { channel: @name }        
-
+    unsubscribe: ->
+        @socket.emit 'unsubscribe', { channel: @name }
+        @trigger 'del'
+        
     del: -> @unsubscribe()
 
-lweb = exports.lweb = shared.lwebInterface.extend4000
+ChannelClient = Backbone.Model.extend4000
+    channel: (channelname) ->
+        if channel = @channels[channelname] then return channel
+        channel = @channels[channelname] = new Channel lweb: @, name: channelname
+        channel.on 'del', => delete @channels[channelname]
+        return channel
+
+lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelClient,
+    initialize: ->
+        @channels = {}
     connect: (host = "http://" + window.location.host) -> @socket = io.connect host
     once: (args...) -> @socket.once.apply @socket, args
     on: (args...) -> @socket.on.apply @socket, args
     emit: (args...) -> @socket.once.apply @socket, args
-    subscribe: (channelname) -> return new Channel lweb: @, name: channelname

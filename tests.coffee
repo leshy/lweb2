@@ -1,11 +1,15 @@
 lwebs = require './serverside'
-lwebc = require './clientisde'
+lwebc = require './clientside'
+shared = require './shared'
 
 # this is just a sketch..
 # the idea is to keep things fast and simple,
 # channel broadcasts and easy and simmetric JSON query/response system, supporting multiple messages in a response.
 
 exports.basic = (test) ->
+    test.done() # this is just a sketch
+    return
+    
     lwebs = lwebs.listen()
     lwebc = lwebc.connect()
 
@@ -26,5 +30,25 @@ exports.basic = (test) ->
     # check login conversation implementation on top of comm5, to see what kind of API would be nice..
     # you were thinking about some kind of reply subclass that could have protocol implementation on top of itself. that sounds good.
     # lets leave this for laters... keep it as simple as possible.
+
+
+
+
+
+exports.SimpleSubscriptionMan = (test) ->
+    a = new shared.SubscriptionMan()
+    a.subscribe { bla: true }, (msg) -> test.done()
+    a.event { bla: 'test1' }
+
+exports.SimpleSubscriptionMan_fail = (test) ->
+    a = new shared.SubscriptionMan()
+    a.subscribe { bla: 'testx' }, (msg) -> test.fail()
+    a.event { bla: 'test1' }
+    test.done()
+
+exports.SimpleSubscriptionMan_exact = (test) ->
+    a = new shared.SubscriptionMan()
+    a.subscribe { bla: 'test1' }, (msg) -> test.done()
+    a.event { bla: 'test1' }
 
 

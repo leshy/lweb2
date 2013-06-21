@@ -18,11 +18,13 @@ Channel = shared.channelInterface.extend4000 # subscriberman in the future..
         
     unsubscribe: (client) ->
         delete @subscribers[client.id]
-                
+        if _.isEmpty @subscribers then @del() # garbage collect the channel
+    
     broadcast: (msg, exclude) ->
         _.map @subscribers, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
-
-    del: -> @subscribers = {}
+    del: ->
+        @subscribers = {}
+        @trigger 'del'
 
 # this is the core.. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.. db is a bottleneck then, but I can distribute that too
 ChannelServer = shared.channelInterface.extend4000
@@ -36,21 +38,20 @@ ChannelServer = shared.channelInterface.extend4000
 
     subscribe: (channelname,client) ->
         console.log 'subscribe to', channelname
-        if not channel = @channels[channelname] then channel = @channels[channelname] = new Channel name: channelname
+        if not channel = @channels[channelname]
+            channel = @channels[channelname] = new Channel name: channelname
+            channel.on 'del', => delete @channels[channelname]
         channel.subscribe client
 
-    unsubscribe: (channel,socket) ->
-        if not channel = @channels[channel] then return
+    unsubscribe: (channelname,socket) ->
+        if not channel = @channels[channelname] then return
         channel.unsubscribe socket
 
-exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
+lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
     listen: (http = @get 'http', options = @get 'options') ->
         @server = io.listen(http, options or {})
 
         @server.on 'connection', (client) =>
-            # channel msg
-            # client.on 'cmsg', (msg) => @broadcast msg.c, msg.m
-            # channel sub/unsub
             id = client.id
             host = client.handshake.address.address
             

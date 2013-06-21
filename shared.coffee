@@ -3,13 +3,15 @@ _ = require 'underscore'
 
 SimpleMatcher = Backbone.Model.extend4000
     match: (value,pattern) ->
-        if pattern == true then return true
-        true        
+        if pattern is true then return true
+            
+        not _.find pattern, (checkvalue,key) ->
+            if not value[key] then return true
+            if checkvalue isnt true and value[key] isnt checkvalue then return true
+            false
 
 SubscriptionMan = exports.SubscriptionMan = SimpleMatcher.extend4000
-    initialize: ->
-        cnt = 0
-        @subscriptions = []
+    initialize: -> @subscriptions = []
 
     subscribe: (pattern,callback,name) -> @subscriptions.push pattern: pattern, callback: callback
     
