@@ -22,21 +22,21 @@
       this.socket = this.get('lweb').socket || (function() {
         throw 'channel needs lweb';
       })();
-      this.socket.emit('subscribe', {
+      this.socket.emit('join', {
         channel: this.name
       });
       return this.socket.on(this.name, function(msg) {
         return _this.event(msg);
       });
     },
-    unsubscribe: function() {
-      this.socket.emit('unsubscribe', {
+    part: function() {
+      this.socket.emit('part', {
         channel: this.name
       });
       return this.trigger('del');
     },
     del: function() {
-      return this.unsubscribe();
+      return this.part();
     }
   });
 

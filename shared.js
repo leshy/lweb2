@@ -49,14 +49,14 @@
     }
   });
 
-  channelInterface = exports.channelInterface = SubscriptionMan.extend4000({
+  channelInterface = exports.channelInterface = Backbone.Model.extend4000({
     broadcast: function(channel, message) {
       return true;
     },
-    subscribe: function(channel, listener) {
+    join: function(channel, listener) {
       return true;
     },
-    unsubscribe: function(channel, listener) {
+    part: function(channel, listener) {
       return true;
     },
     del: function() {
@@ -64,7 +64,7 @@
     }
   });
 
-  lwebInterface = exports.lwebInterface = Backbone.Model.extend4000({
+  lwebInterface = exports.lwebInterface = SubscriptionMan.extend4000({
     initialize: function() {
       return true;
     },

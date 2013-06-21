@@ -10,14 +10,14 @@ Channel = exports.Channel = shared.SubscriptionMan.extend4000
     initialize: ->
         @name = @get 'name' or throw 'channel needs a name'
         @socket = @get('lweb').socket or throw 'channel needs lweb'
-        @socket.emit 'subscribe', { channel: @name }
+        @socket.emit 'join', { channel: @name }
         @socket.on @name, (msg) => @event msg
 
-    unsubscribe: ->
-        @socket.emit 'unsubscribe', { channel: @name }
+    part: ->
+        @socket.emit 'part', { channel: @name }
         @trigger 'del'
         
-    del: -> @unsubscribe()
+    del: -> @part()
 
 ChannelClient = Backbone.Model.extend4000
     channel: (channelname) ->

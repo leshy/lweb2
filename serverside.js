@@ -14,36 +14,36 @@
 
   _.extend(exports, shared = require('./shared'));
 
-  Channel = shared.channelInterface.extend4000({
+  Channel = shared.SubscriptionMan.extend4000({
     initialize: function() {
       this.name = this.get('name' || (function() {
         throw 'channel needs a name';
       })());
-      return this.subscribers = {};
+      return this.clients = {};
     },
-    subscribe: function(client) {
+    join: function(client) {
       var _this = this;
-      this.subscribers[client.id] = client;
+      this.clients[client.id] = client;
       return client.on('disconnect', function() {
         return _this.unsubscribe(client);
       });
     },
-    unsubscribe: function(client) {
-      delete this.subscribers[client.id];
-      if (_.isEmpty(this.subscribers)) {
+    part: function(client) {
+      delete this.clients[client.id];
+      if (_.isEmpty(this.clients)) {
         return this.del();
       }
     },
     broadcast: function(msg, exclude) {
       var _this = this;
-      return _.map(this.subscribers, function(subscriber) {
+      return _.map(this.clients, function(subscriber) {
         if (subscriber !== exclude) {
           return subscriber.emit(_this.name, msg);
         }
       });
     },
     del: function() {
-      this.subscribers = {};
+      this.clients = {};
       return this.trigger('del');
     }
   });
@@ -60,10 +60,10 @@
       }
       return channel.broadcast(msg);
     },
-    subscribe: function(channelname, client) {
+    join: function(channelname, client) {
       var channel,
         _this = this;
-      console.log('subscribe to', channelname);
+      console.log('join to', channelname);
       if (!(channel = this.channels[channelname])) {
         channel = this.channels[channelname] = new Channel({
           name: channelname
@@ -72,14 +72,14 @@
           return delete _this.channels[channelname];
         });
       }
-      return channel.subscribe(client);
+      return channel.join(client);
     },
-    unsubscribe: function(channelname, socket) {
+    part: function(channelname, socket) {
       var channel;
       if (!(channel = this.channels[channelname])) {
         return;
       }
-      return channel.unsubscribe(socket);
+      return channel.part(socket);
     }
   });
 
@@ -96,15 +96,15 @@
         id = client.id;
         host = client.handshake.address.address;
         console.log('got connection from', host, id);
-        client.on('subscribe', function(msg) {
-          return _this.subscribe(msg.channel, client);
+        client.on('join', function(msg) {
+          return _this.join(msg.channel, client);
         });
-        client.on('unsubscribe', function(msg) {
-          return _this.unsubscribe(msg.channel, client);
+        client.on('part', function(msg) {
+          return _this.part(msg.channel, client);
         });
         return client.on('disconnect', function() {
           return _.map(client.channels, function(channel) {
-            return _this.unsubscribe(channel, client);
+            return _this.join(channel, client);
           });
         });
       });

@@ -24,13 +24,13 @@ SubscriptionMan = exports.SubscriptionMan = SimpleMatcher.extend4000
         _.map subscriptions, (subscription) ->
             subscription.callback(value)
 
-channelInterface = exports.channelInterface = SubscriptionMan.extend4000
+channelInterface = exports.channelInterface = Backbone.Model.extend4000
     broadcast: (channel,message) -> true
-    subscribe: (channel,listener) -> true
-    unsubscribe: (channel,listener) -> true
+    join: (channel,listener) -> true
+    part: (channel,listener) -> true
     del: -> true
 
-lwebInterface = exports.lwebInterface = Backbone.Model.extend4000
+lwebInterface = exports.lwebInterface = SubscriptionMan.extend4000
     initialize: -> true
     query: (msg) -> true
 

@@ -7,23 +7,23 @@ _ = require 'underscore'
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
 
-Channel = shared.channelInterface.extend4000 # subscriberman in the future..
+Channel = shared.SubscriptionMan.extend4000
     initialize: () ->
         @name = @get 'name' or throw 'channel needs a name'
-        @subscribers = {}
+        @clients = {}
 
-    subscribe: (client) ->
-        @subscribers[client.id] = client
+    join: (client) ->
+        @clients[client.id] = client
         client.on 'disconnect', => @unsubscribe client
         
-    unsubscribe: (client) ->
-        delete @subscribers[client.id]
-        if _.isEmpty @subscribers then @del() # garbage collect the channel
+    part: (client) ->
+        delete @clients[client.id]
+        if _.isEmpty @clients then @del() # garbage collect the channel
     
     broadcast: (msg, exclude) ->
-        _.map @subscribers, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
+        _.map @clients, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
     del: ->
-        @subscribers = {}
+        @clients = {}
         @trigger 'del'
 
 # this is the core.. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.. db is a bottleneck then, but I can distribute that too
@@ -36,16 +36,16 @@ ChannelServer = shared.channelInterface.extend4000
         if not channel = @channels[channelname] then return
         channel.broadcast msg
 
-    subscribe: (channelname,client) ->
-        console.log 'subscribe to', channelname
+    join: (channelname,client) ->
+        console.log 'join to', channelname
         if not channel = @channels[channelname]
             channel = @channels[channelname] = new Channel name: channelname
             channel.on 'del', => delete @channels[channelname]
-        channel.subscribe client
+        channel.join client
 
-    unsubscribe: (channelname,socket) ->
+    part: (channelname,socket) ->
         if not channel = @channels[channelname] then return
-        channel.unsubscribe socket
+        channel.part socket
 
 lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
     listen: (http = @get 'http', options = @get 'options') ->
@@ -56,11 +56,11 @@ lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
             host = client.handshake.address.address
             
             console.log 'got connection from', host, id
-            client.on 'subscribe', (msg) =>
-                @subscribe msg.channel, client
-            client.on 'unsubscribe', (msg) => @unsubscribe msg.channel, client
+            client.on 'join', (msg) =>
+                @join msg.channel, client
+            client.on 'part', (msg) => @part msg.channel, client
             
-            client.on 'disconnect', => _.map client.channels, (channel) => @unsubscribe channel, client
+            client.on 'disconnect', => _.map client.channels, (channel) => @join channel, client
 
         loopy = =>
             @broadcast 'testchannel', ping: new Date().getTime()
