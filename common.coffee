@@ -5,4 +5,6 @@ exports.common = 'hi there'
 
 exports.QueryNode = SubscriptionMan.extend4000
     initialize: -> true
-    
+
+
+

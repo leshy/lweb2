@@ -30,10 +30,8 @@
     }, function(err, msg) {
       return console.log('got', msg);
     });
-    return lwebc.query({
+    return lwebc.multiQuery({
       bla: 3
-    }).stream().on({
-      response: true
     }, function(err, data) {
       return true;
     });

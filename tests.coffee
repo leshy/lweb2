@@ -10,23 +10,21 @@ exports.basic = (test) ->
     lwebc = lwebc.connect()
 
     lwebc.channels.on 'channel1', (msg) -> console.log 'channel msg',msg
-            
+    lwebs.channels.broadcast 'channel1', message: 'test message1'
 
-    lwebs.channels.broadcast 'channel1', { message: 'test message1' }
-
-    lwebs.on { bla: true }, (msg,response,client) ->
+    lwebs.on { bla: true }, (msg,response,client) -> 
         response.send response: 1
-        response.end response: 2
+        response.end  response: 2
 
     # callback will be called three times, two times for each of the messages received, and third time, with no arguments, marking the ending of a query reply        
     lwebc.query bla: 3, (err,msg) -> console.log 'got', msg
 
     # or?
     # not sure, lets leave streaming for later..
-    lwebc.query(bla: 3).stream().on { response: true}, (err,data) ->
-        true
+    lwebc.multiQuery bla: 3, (err,data) -> true
     
-    # please check login conversation implementation on top of comm5, to see what kind of API would be nice
-
+    # check login conversation implementation on top of comm5, to see what kind of API would be nice..
+    # you were thinking about some kind of reply subclass that could have protocol implementation on top of itself. that sounds good.
+    # lets leave this for laters... keep it as simple as possible.
 
 
