@@ -13,7 +13,7 @@
 
   _.extend(exports, shared = require('./shared'));
 
-  Channel = exports.Channel = shared.SubscriptionMan.extend4000({
+  Channel = exports.Channel = shared.SubscriptionMan2.extend4000({
     initialize: function() {
       var _this = this;
       this.name = this.get('name' || (function() {

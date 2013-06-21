@@ -10,7 +10,7 @@ SimpleMatcher = Backbone.Model.extend4000
             if checkvalue isnt true and value[key] isnt checkvalue then return true
             false
 
-SubscriptionMan = exports.SubscriptionMan = SimpleMatcher.extend4000
+SubscriptionMan2 = exports.SubscriptionMan2 = SimpleMatcher.extend4000
     initialize: -> @subscriptions = []
 
     subscribe: (pattern,callback,name) ->
@@ -30,7 +30,7 @@ channelInterface = exports.channelInterface = Backbone.Model.extend4000
     part: (channel,listener) -> true
     del: -> true
 
-lwebInterface = exports.lwebInterface = SubscriptionMan.extend4000
+lwebInterface = exports.lwebInterface = SubscriptionMan2.extend4000
     initialize: -> true
     query: (msg) -> true
 

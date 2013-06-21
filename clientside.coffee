@@ -6,7 +6,7 @@ _ = require 'underscore'
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
 
-Channel = exports.Channel = shared.SubscriptionMan.extend4000
+Channel = exports.Channel = shared.SubscriptionMan2.extend4000
     initialize: ->
         @name = @get 'name' or throw 'channel needs a name'
         @socket = @get('lweb').socket or throw 'channel needs lweb'

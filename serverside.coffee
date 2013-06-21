@@ -1,13 +1,12 @@
 io = require 'socket.io'
 Backbone = require 'backbone4000'
-SubscriptionMan = require('subscriptionman').SubscriptionMan
 helpers = require 'helpers'
 _ = require 'underscore'
 
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
 
-Channel = shared.SubscriptionMan.extend4000
+Channel = shared.SubscriptionMan2.extend4000
     initialize: () ->
         @name = @get 'name' or throw 'channel needs a name'
         @clients = {}
@@ -22,6 +21,7 @@ Channel = shared.SubscriptionMan.extend4000
     
     broadcast: (msg, exclude) ->
         _.map @clients, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
+        
     del: ->
         @clients = {}
         @trigger 'del'
@@ -56,11 +56,8 @@ lweb = exports.lweb = shared.lwebInterface.extend4000 ChannelServer,
             host = client.handshake.address.address
             
             console.log 'got connection from', host, id
-            client.on 'join', (msg) =>
-                @join msg.channel, client
+            client.on 'join', (msg) => @join msg.channel, client
             client.on 'part', (msg) => @part msg.channel, client
-            
-            client.on 'disconnect', => _.map client.channels, (channel) => @join channel, client
 
         loopy = =>
             @broadcast 'testchannel', ping: new Date().getTime()
