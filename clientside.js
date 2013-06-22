@@ -58,7 +58,7 @@
       });
       return channel;
     },
-    subscribe: function(channelname, pattern, callback) {
+    channelsubscribe: function(channelname, pattern, callback) {
       var channel;
       channel = this.channel(channelname);
       if (!callback && pattern.constructor === Function) {

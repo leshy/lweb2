@@ -27,7 +27,7 @@ Channel = shared.SubscriptionMan2.extend4000
         @clients = {}
         @trigger 'del'
 
-# this is the core.. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.. db is a bottleneck then, but I can distribute that too
+# this is the pub/sub core. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.
 ChannelServer = shared.channelInterface.extend4000
     initialize: ->
         @channels = {}
@@ -50,26 +50,28 @@ ChannelServer = shared.channelInterface.extend4000
 
 lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, shared.queryServer, ChannelServer,
     initialize: -> 
-        http = @get 'http'
-        options = @get 'options'
-        
-        @server = io.listen(http, options or {})
+        http = @get 'http'        
+        if not http then throw "I need http instance in order to listen"
+            
+        @server = io.listen http, log: false # turning off socket.io logging
 
-        @server.on 'connection', (client) =>
+        # this kinda sucks, I'd like to hook messages on the server level,
+        # not create 4 new callbacks per any new client.. investigate.
+        @server.on 'connection', (client) => 
             id = client.id
             host = client.handshake.address.address
             
             console.log 'got connection from', host, id
+            
+            # channels
             client.on 'join', (msg) => @join msg.channel, client
             client.on 'part', (msg) => @part msg.channel, client
-
+            # queries
             client.on 'query', (msg) => @queryReceive msg, client
             client.on 'reply', (msg) => @queryReplyReceive msg, client
 
-        loopy = =>
+        # just a test channel broadcasts
+        testyloopy = =>
             @broadcast 'testchannel', ping: helpers.uuid()
-            helpers.sleep 10000, loopy
-            
-        loopy()
-
-
+            helpers.sleep 10000, testyloopy            
+        testyloopy()

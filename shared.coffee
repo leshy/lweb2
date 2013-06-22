@@ -56,13 +56,18 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
 
     queryReplyReceive: (msg) ->
         callback = @queries[msg.id]
-        callback(msg.payload)
-        if msg.end then delete @queries[msg.id]
-            
+        
+        if not msg.end
+            callback msg.payload, false
+        else
+            callback msg.payload, true
+            delete @queries[msg.id]
+        
     query: (msg,callback) ->
         id = helpers.uuid(10)
         @queries[id] = callback
         @socket.emit 'query', { id: id, payload: msg }
+        true
 
 queryServer = exports.queryServer = SubscriptionMan2.extend4000
 

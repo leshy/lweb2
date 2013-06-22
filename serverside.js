@@ -84,11 +84,15 @@
 
   lweb = exports.lweb = shared.SubscriptionMan2.extend4000(shared.queryClient, shared.queryServer, ChannelServer, {
     initialize: function() {
-      var http, loopy, options,
+      var http, testyloopy,
         _this = this;
       http = this.get('http');
-      options = this.get('options');
-      this.server = io.listen(http, options || {});
+      if (!http) {
+        throw "I need http instance in order to listen";
+      }
+      this.server = io.listen(http, {
+        log: false
+      });
       this.server.on('connection', function(client) {
         var host, id;
         id = client.id;
@@ -107,13 +111,13 @@
           return _this.queryReplyReceive(msg, client);
         });
       });
-      loopy = function() {
+      testyloopy = function() {
         _this.broadcast('testchannel', {
           ping: helpers.uuid()
         });
-        return helpers.sleep(10000, loopy);
+        return helpers.sleep(10000, testyloopy);
       };
-      return loopy();
+      return testyloopy();
     }
   });
 

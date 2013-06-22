@@ -29,7 +29,7 @@ ChannelClient = Backbone.Model.extend4000
         channel.on 'del', => delete @channels[channelname]
         return channel
 
-    subscribe: (channelname, pattern, callback) ->
+    channelsubscribe: (channelname, pattern, callback) ->
         channel = @channel(channelname)
         if not callback and pattern.constructor is Function then callback = pattern; pattern = true
         channel.subscribe pattern, callback

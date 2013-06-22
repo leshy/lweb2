@@ -112,8 +112,10 @@
     queryReplyReceive: function(msg) {
       var callback;
       callback = this.queries[msg.id];
-      callback(msg.payload);
-      if (msg.end) {
+      if (!msg.end) {
+        return callback(msg.payload, false);
+      } else {
+        callback(msg.payload, true);
         return delete this.queries[msg.id];
       }
     },
@@ -121,10 +123,11 @@
       var id;
       id = helpers.uuid(10);
       this.queries[id] = callback;
-      return this.socket.emit('query', {
+      this.socket.emit('query', {
         id: id,
         payload: msg
       });
+      return true;
     }
   });
 
