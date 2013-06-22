@@ -3,11 +3,9 @@ lweb
 
 simple horizontally scalable websocket comm framework supporting channels and queries
 
-api
-===
-
 serverside
 ----------
+```coffeescript
 lweb = new lweb.lweb http: env.http
 lweb.listen()
 
@@ -22,10 +20,11 @@ lweb.subscribe testattr: 'hi', stream: true, (msg,reply) ->
 
 # channel broadcast
 lweb.broadcast 'testchannel', bla: 3
-
+````
 
 clientside
 ----------
+```coffeescript
 lweb = new lweb()
 
 lweb.query { ping: 3 }, (msg) ->
@@ -43,3 +42,4 @@ testchannel = lweb.channel 'testchannel'
 
 testchannel.subscribe some: 'other', pattern: true, (msg) ->
     console.log msg
+```
