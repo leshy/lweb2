@@ -60,15 +60,22 @@
     }
   });
 
-  lweb = exports.lweb = shared.SubscriptionMan2.extend4000(ChannelClient, {
+  lweb = exports.lweb = ChannelClient.extend4000(shared.queryClient, shared.queryServer, {
+    initialize: function() {
+      return window.lweb = this;
+    },
     connect: function(host) {
+      var _this = this;
       if (host == null) {
         host = "http://" + window.location.host;
       }
-      return this.socket = io.connect(host);
-    },
-    query: function() {
-      return true;
+      this.socket = io.connect(host);
+      this.socket.on('query', function(msg) {
+        return _this.queryReceive(msg, _this.socket);
+      });
+      return this.socket.on('reply', function(msg) {
+        return _this.queryReplyReceive(msg, _this.socket);
+      });
     }
   });
 

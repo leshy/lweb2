@@ -16,6 +16,7 @@ Channel = shared.SubscriptionMan2.extend4000
         client.on 'disconnect', => @part client
         
     part: (client) ->
+        console.log 'part from', @name, client.id
         delete @clients[client.id]
         if _.isEmpty @clients then @del() # garbage collect the channel
     
@@ -47,7 +48,7 @@ ChannelServer = shared.channelInterface.extend4000
         if not channel = @channels[channelname] then return
         channel.part socket
 
-lweb = exports.lweb = shared.SubscriptionMan2.extend4000 ChannelServer,
+lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, shared.queryServer, ChannelServer,
     listen: (http = @get 'http', options = @get 'options') ->
         @server = io.listen(http, options or {})
 
@@ -59,10 +60,15 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 ChannelServer,
             client.on 'join', (msg) => @join msg.channel, client
             client.on 'part', (msg) => @part msg.channel, client
 
+            client.on 'query', (msg) =>
+                console.log 'received query',msg
+                @queryReceive msg, client
+            client.on 'reply', (msg) => @queryReplyReceive msg, client
+
         loopy = =>
             @broadcast 'testchannel', ping: helpers.uuid()
-            helpers.sleep 1000, loopy
+            helpers.sleep 5000, loopy
             
         loopy()
 
-        
+

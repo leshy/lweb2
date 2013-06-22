@@ -19,14 +19,17 @@
     lwebs.channels.broadcast('channel1', {
       message: 'test message1'
     });
-    lwebs.on({
+    lwebs.subscribe({
       bla: true
     }, function(msg, response, client) {
-      response.send({
+      response.write({
         response: 1
       });
-      return response.end({
+      response.write({
         response: 2
+      });
+      return response.end({
+        response: 3
       });
     });
     lwebc.query({

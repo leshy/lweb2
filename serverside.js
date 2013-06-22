@@ -27,6 +27,7 @@
       });
     },
     part: function(client) {
+      console.log('part from', this.name, client.id);
       delete this.clients[client.id];
       if (_.isEmpty(this.clients)) {
         return this.del();
@@ -81,7 +82,7 @@
     }
   });
 
-  lweb = exports.lweb = shared.SubscriptionMan2.extend4000(ChannelServer, {
+  lweb = exports.lweb = shared.SubscriptionMan2.extend4000(shared.queryClient, shared.queryServer, ChannelServer, {
     listen: function(http) {
       var loopy, options,
         _this = this;
@@ -97,15 +98,22 @@
         client.on('join', function(msg) {
           return _this.join(msg.channel, client);
         });
-        return client.on('part', function(msg) {
+        client.on('part', function(msg) {
           return _this.part(msg.channel, client);
+        });
+        client.on('query', function(msg) {
+          console.log('received query', msg);
+          return _this.queryReceive(msg, client);
+        });
+        return client.on('reply', function(msg) {
+          return _this.queryReplyReceive(msg, client);
         });
       });
       loopy = function() {
         _this.broadcast('testchannel', {
           ping: helpers.uuid()
         });
-        return helpers.sleep(1000, loopy);
+        return helpers.sleep(5000, loopy);
       };
       return loopy();
     }
