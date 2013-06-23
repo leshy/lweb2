@@ -49,3 +49,4 @@ exports.SimpleSubscriptionMan_exact = (test) ->
     a.subscribe { bla: 'test1' }, (msg) -> test.done()
     a.event { bla: 'test1' }
 
+
