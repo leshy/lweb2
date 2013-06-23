@@ -2,7 +2,9 @@ Validator = require 'validator2-extras'; v = Validator.v; Select = Validator.Sel
 Backbone = require 'backbone4000'
 collections = require 'collections/collections'
 
-msgCallback = (callback) -> (msg, end) -> if end then callback msg.err, msg.data
+msgCallback = (callback) -> (msg, end) ->
+    if not callback then return
+    if end then callback msg.err, msg.data
 
 # has the same interface as local collections but it transparently talks to the remote collectionExposer via the messaging system,
 RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collections.ModelMixin, collections.ReferenceMixin, Validator.ValidatedModel,
@@ -28,7 +30,6 @@ RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collecti
 
     findOne: (pattern,callback) ->
         @lweb.query { collection: @get('name'), findOne: pattern }, (msg,end) ->
-            console.log "QUERY REPLY", msg,end
             if msg then callback(undefined,msg.data) else callback("not found")
 
     fcall: (name, args, pattern, callback) ->

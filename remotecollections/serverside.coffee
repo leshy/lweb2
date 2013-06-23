@@ -27,18 +27,18 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
             (msg,reply) => @remove msg.remove, callbackMsgEnd reply
         
         # update raw
-        lweb.subscribe { collection: name, update: true, data: true },
+        lweb.subscribe { collection: name, update: true, data: true, raw: true },
             (msg,reply) => @update msg.update, msg.data, callbackMsgEnd reply
             
         # remove
         lweb.subscribe { collection: name, remove: true },
-            (msg,reply,next,transmit) => @findModels(msg.find).each (entry) =>
+            (msg,reply) => @findModels msg.remove, {}, (entry) -> 
                 if entry? then entry.remove() else reply.end()
 
         # update
         lweb.subscribe { collection: name, update: true, data: true },
-            (msg,reply) => @findModels(msg.find).each (entry) =>
-                if entry? then entry.update(data,msg.realm); entry.flush() else reply.end()
+            (msg,reply) => @findModels msg.update, {}, (entry) =>
+                if entry? then entry.update(data,'public'); entry.flush() else reply.end()
         
         # find
         lweb.subscribe { collection: name, find: true },

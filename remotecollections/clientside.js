@@ -14,6 +14,9 @@
 
   msgCallback = function(callback) {
     return function(msg, end) {
+      if (!callback) {
+        return;
+      }
       if (end) {
         return callback(msg.err, msg.data);
       }
@@ -69,7 +72,6 @@
         collection: this.get('name'),
         findOne: pattern
       }, function(msg, end) {
-        console.log("QUERY REPLY", msg, end);
         if (msg) {
           return callback(void 0, msg.data);
         } else {

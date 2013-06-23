@@ -33,7 +33,7 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
         @queries = []
 
     queryReplyReceive: (msg) ->
-        callback = @queries[msg.id]        
+        if not callback = @queries[msg.id] then return
         if not msg.end
             callback msg.payload, false
         else

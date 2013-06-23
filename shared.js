@@ -67,7 +67,9 @@
     },
     queryReplyReceive: function(msg) {
       var callback;
-      callback = this.queries[msg.id];
+      if (!(callback = this.queries[msg.id])) {
+        return;
+      }
       if (!msg.end) {
         return callback(msg.payload, false);
       } else {

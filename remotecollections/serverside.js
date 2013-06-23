@@ -49,15 +49,16 @@
       lweb.subscribe({
         collection: name,
         update: true,
-        data: true
+        data: true,
+        raw: true
       }, function(msg, reply) {
         return _this.update(msg.update, msg.data, callbackMsgEnd(reply));
       });
       lweb.subscribe({
         collection: name,
         remove: true
-      }, function(msg, reply, next, transmit) {
-        return _this.findModels(msg.find).each(function(entry) {
+      }, function(msg, reply) {
+        return _this.findModels(msg.remove, {}, function(entry) {
           if (entry != null) {
             return entry.remove();
           } else {
@@ -70,9 +71,9 @@
         update: true,
         data: true
       }, function(msg, reply) {
-        return _this.findModels(msg.find).each(function(entry) {
+        return _this.findModels(msg.update, {}, function(entry) {
           if (entry != null) {
-            entry.update(data, msg.realm);
+            entry.update(data, 'public');
             return entry.flush();
           } else {
             return reply.end();
