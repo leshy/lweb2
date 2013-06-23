@@ -5,7 +5,7 @@ _ = require 'underscore'
 
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
-_.extend exports, shared = require './remotecollections/clientside.coffee'
+_.extend exports, collections = require './remotecollections/clientside.coffee'
 
 
 Channel = exports.Channel = shared.SubscriptionMan2.extend4000
@@ -43,5 +43,6 @@ lweb = exports.lweb = ChannelClient.extend4000 shared.queryClient, shared.queryS
         @socket.on 'query', (msg) => @queryReceive msg, @socket
         @socket.on 'reply', (msg) => @queryReplyReceive msg, @socket
                         
+    collection: (name) -> new exports.RemoteCollection lweb: @, name: name
 
 

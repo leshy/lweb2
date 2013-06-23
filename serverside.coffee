@@ -5,7 +5,7 @@ _ = require 'underscore'
 
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
-_.extend exports, shared = require './remotecollections/serverside.coffee'
+_.extend exports, collections = require './remotecollections/serverside.coffee'
 
 Channel = shared.SubscriptionMan2.extend4000
     initialize: () ->

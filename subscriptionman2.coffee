@@ -1,3 +1,5 @@
+Backbone = require 'backbone4000'
+_ = require 'underscore'
 
 SimpleMatcher = Backbone.Model.extend4000
     match: (value,pattern) ->

@@ -12,7 +12,7 @@
 
   collections = require('collections/collections');
 
-  mongo = require('collections/serverside/mongo');
+  mongo = require('collections/serverside/mongodb');
 
   callbackMsgEnd = function(reply) {
     return function(err, data) {
@@ -23,7 +23,7 @@
     };
   };
 
-  CollectionExposer = exports.CollectionExposer = SubscriptionMan2.extend4000({
+  CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000({
     defaults: {
       name: void 0
     },
@@ -33,28 +33,28 @@
       name = this.get('name');
       lweb = this.get('lweb');
       lweb.subscribe({
-        collection: name
-      }, function(msg) {
-        return _this.event(msg);
-      });
-      this.subscribe({
+        collection: name,
         create: true
       }, function(msg, reply) {
+        console.log('create msg received', msg);
         return _this.create(msg.create, callbackMsgEnd(reply));
       });
-      this.subscribe({
+      lweb.subscribe({
+        collection: name,
         remove: true,
         raw: true
       }, function(msg, reply) {
         return _this.remove(msg.remove, callbackMsgEnd(reply));
       });
-      this.subscribe({
+      lweb.subscribe({
+        collection: name,
         update: true,
         data: true
       }, function(msg, reply) {
         return _this.update(msg.update, msg.data, callbackMsgEnd(reply));
       });
-      this.subscribe({
+      lweb.subscribe({
+        collection: name,
         remove: true
       }, function(msg, reply, next, transmit) {
         return _this.findModels(msg.find).each(function(entry) {
@@ -65,7 +65,8 @@
           }
         });
       });
-      this.subscribe({
+      lweb.subscribe({
+        collection: name,
         update: true,
         data: true
       }, function(msg, reply) {
@@ -78,7 +79,8 @@
           }
         });
       });
-      this.subscribe({
+      lweb.subscribe({
+        collection: name,
         find: true
       }, function(msg, reply) {
         return _this.find(msg.find, msg.limits || {}, function(entry) {
@@ -92,21 +94,22 @@
           }
         });
       });
-      this.subscribe({
+      lweb.subscribe({
+        collection: name,
         findOne: true
       }, function(msg, reply) {
-        return _this.findOne(msg.findOne, function(err, entry) {
-          if (entry != null) {
-            return reply.write({
-              data: entry,
-              err: void 0
-            });
-          } else {
-            return reply.end();
-          }
-        });
+        _this.findOne(msg.findOne, function(err, entry) {});
+        if (typeof entry !== "undefined" && entry !== null) {
+          return reply.write({
+            data: entry,
+            err: void 0
+          });
+        } else {
+          return reply.end();
+        }
       });
-      return this.subscribe({
+      return lweb.subscribe({
+        collection: name,
         call: true,
         data: true
       }, function(msg, reply) {
@@ -124,6 +127,6 @@
     }
   });
 
-  exports.MongoCollection = mongo.MongoCollection.extend4000(CollectionExposer, ReferenceMixin, ModelMixin);
+  exports.MongoCollection = mongo.MongoCollection.extend4000(CollectionExposer, collections.ReferenceMixin, collections.ModelMixin);
 
 }).call(this);
