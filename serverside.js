@@ -12,6 +12,8 @@
 
   _.extend(exports, shared = require('./shared'));
 
+  _.extend(exports, shared = require('./remotecollections/serverside.coffee'));
+
   Channel = shared.SubscriptionMan2.extend4000({
     initialize: function() {
       this.name = this.get('name' || (function() {
@@ -118,6 +120,13 @@
         return helpers.sleep(10000, testyloopy);
       };
       return testyloopy();
+    },
+    collection: function(name) {
+      return new exports.MongoCollection({
+        lweb: this,
+        db: this.get('db'),
+        collection: name
+      });
     }
   });
 

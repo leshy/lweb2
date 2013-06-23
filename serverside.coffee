@@ -5,6 +5,7 @@ _ = require 'underscore'
 
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
+_.extend exports, shared = require './remotecollections/serverside.coffee'
 
 Channel = shared.SubscriptionMan2.extend4000
     initialize: () ->
@@ -75,3 +76,8 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
             @broadcast 'testchannel', ping: helpers.uuid()
             helpers.sleep 10000, testyloopy            
         testyloopy()
+
+
+    collection: (name) -> new exports.MongoCollection lweb: @, db: @get('db'), collection: name
+
+

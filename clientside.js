@@ -12,6 +12,8 @@
 
   _.extend(exports, shared = require('./shared'));
 
+  _.extend(exports, shared = require('./remotecollections/clientside.coffee'));
+
   Channel = exports.Channel = shared.SubscriptionMan2.extend4000({
     initialize: function() {
       var _this = this;
