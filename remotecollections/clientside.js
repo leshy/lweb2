@@ -10,7 +10,7 @@
 
   Backbone = require('backbone4000');
 
-  collections = require('collections/collections');
+  collections = require('collections');
 
   msgCallback = function(callback) {
     return function(msg, end) {

@@ -4,7 +4,7 @@ helpers = require 'helpers'
 
 SubscriptionMan2 = require('./../subscriptionman2').SubscriptionMan2
 
-collections = require 'collections/collections'
+collections = require 'collections'
 mongo = require 'collections/serverside/mongodb'
 
 callbackMsgEnd = (reply) -> (err,data) -> reply.end err: err, data: data

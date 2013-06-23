@@ -1,6 +1,6 @@
 Validator = require 'validator2-extras'; v = Validator.v; Select = Validator.Select
 Backbone = require 'backbone4000'
-collections = require 'collections/collections'
+collections = require 'collections'
 
 msgCallback = (callback) -> (msg, end) ->
     if not callback then return

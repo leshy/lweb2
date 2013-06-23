@@ -43,11 +43,13 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
     query: (msg,callback) ->
         id = helpers.uuid(10)
         @queries[id] = callback
+        console.log 'sending query',msg
         @socket.emit 'query', { id: id, payload: msg }
         true
 
 queryServer = exports.queryServer = SubscriptionMan2.extend4000
     queryReceive: (msg,client) ->
+        console.log 'got query',msg
         if not msg.payload or not msg.id then return console.warn 'invalid query message received:',msg
         @event msg.payload, msg.id, client
                         
