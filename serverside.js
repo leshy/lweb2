@@ -86,7 +86,7 @@
 
   lweb = exports.lweb = shared.SubscriptionMan2.extend4000(shared.queryClient, shared.queryServer, ChannelServer, {
     initialize: function() {
-      var http, testyloopy,
+      var http,
         _this = this;
       http = this.get('http');
       if (!http) {
@@ -95,7 +95,7 @@
       this.server = io.listen(http, {
         log: false
       });
-      this.server.on('connection', function(client) {
+      return this.server.on('connection', function(client) {
         var host, id;
         id = client.id;
         host = client.handshake.address.address;
@@ -113,13 +113,13 @@
           return _this.queryReplyReceive(msg, client);
         });
       });
-      testyloopy = function() {
-        _this.broadcast('testchannel', {
-          ping: helpers.uuid()
-        });
-        return helpers.sleep(10000, testyloopy);
-      };
-      return testyloopy();
+      /*
+              testyloopy = =>
+                  @broadcast 'testchannel', ping: helpers.uuid()
+                  helpers.sleep 10000, testyloopy            
+              testyloopy()
+      */
+
     },
     collection: function(name) {
       return new exports.MongoCollection({

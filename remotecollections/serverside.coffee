@@ -53,8 +53,8 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
                 
         # call
         lweb.subscribe { collection: name, call: true, data: true },
-            (msg,reply) => @fcall msg.call, msg.args or [], msg.data, msg.realm, (err,data) ->
-                if (err or data) then reply.write { err: err, data: data } else reply.end()
+            (msg,reply) => @fcall msg.call, msg.args or [], msg.data, 'somerealm', (err,data) ->
+                reply.end { err: err, data: data }
         
 
 exports.MongoCollection = mongo.MongoCollection.extend4000 CollectionExposer, collections.ReferenceMixin, collections.ModelMixin

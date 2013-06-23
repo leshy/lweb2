@@ -114,15 +114,11 @@
         call: true,
         data: true
       }, function(msg, reply) {
-        return _this.fcall(msg.call, msg.args || [], msg.data, msg.realm, function(err, data) {
-          if (err || data) {
-            return reply.write({
-              err: err,
-              data: data
-            });
-          } else {
-            return reply.end();
-          }
+        return _this.fcall(msg.call, msg.args || [], msg.data, 'somerealm', function(err, data) {
+          return reply.end({
+            err: err,
+            data: data
+          });
         });
       });
     }

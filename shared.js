@@ -49,11 +49,13 @@
     };
 
     Response.prototype.write = function(payload) {
-      return this.client.emit('reply', this.makereply(payload));
+      var reply;
+      return this.client.emit('reply', reply = this.makereply(payload));
     };
 
     Response.prototype.end = function(payload) {
-      this.client.emit('reply', this.makereply(payload, true));
+      var reply;
+      this.client.emit('reply', reply = this.makereply(payload, true));
       return this.ended = true;
     };
 
@@ -67,6 +69,7 @@
     },
     queryReplyReceive: function(msg) {
       var callback;
+      console.log('reply', msg.id, msg.payload);
       if (!(callback = this.queries[msg.id])) {
         return;
       }
@@ -81,7 +84,7 @@
       var id;
       id = helpers.uuid(10);
       this.queries[id] = callback;
-      console.log('sending query', msg);
+      console.log('query', id, msg);
       this.socket.emit('query', {
         id: id,
         payload: msg

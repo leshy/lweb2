@@ -7,7 +7,6 @@ _ = require 'underscore'
 _.extend exports, shared = require './shared'
 _.extend exports, collections = require './remotecollections/clientside.coffee'
 
-
 Channel = exports.Channel = shared.SubscriptionMan2.extend4000
     initialize: ->
         @name = @get 'name' or throw 'channel needs a name'
@@ -44,5 +43,4 @@ lweb = exports.lweb = ChannelClient.extend4000 shared.queryClient, shared.queryS
         @socket.on 'reply', (msg) => @queryReplyReceive msg, @socket
                         
     collection: (name) -> new exports.RemoteCollection lweb: @, name: name
-
 

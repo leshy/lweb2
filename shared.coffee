@@ -22,10 +22,10 @@ class Response
         msg
         
     write: (payload) ->
-        @client.emit 'reply', @makereply(payload)
+        @client.emit 'reply', reply = @makereply(payload)
         
     end: (payload) ->
-        @client.emit 'reply', @makereply(payload, true)
+        @client.emit 'reply', reply = @makereply(payload, true)
         @ended = true
 
 queryClient = exports.queryClient = Backbone.Model.extend4000
@@ -33,6 +33,7 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
         @queries = []
 
     queryReplyReceive: (msg) ->
+        console.log 'reply', msg.id, msg.payload
         if not callback = @queries[msg.id] then return
         if not msg.end
             callback msg.payload, false
@@ -43,7 +44,7 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
     query: (msg,callback) ->
         id = helpers.uuid(10)
         @queries[id] = callback
-        console.log 'sending query',msg
+        console.log 'query',id,msg
         @socket.emit 'query', { id: id, payload: msg }
         true
 

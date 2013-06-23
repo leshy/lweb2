@@ -72,11 +72,12 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
             client.on 'reply', (msg) => @queryReplyReceive msg, client
 
         # just a test channel broadcasts
+        ###
         testyloopy = =>
             @broadcast 'testchannel', ping: helpers.uuid()
             helpers.sleep 10000, testyloopy            
         testyloopy()
-
+        ###
 
     collection: (name) -> new exports.MongoCollection lweb: @, db: @get('db'), collection: name
 
