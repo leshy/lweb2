@@ -48,5 +48,3 @@ exports.SimpleSubscriptionMan_exact = (test) ->
     a = new shared.SubscriptionMan()
     a.subscribe { bla: 'test1' }, (msg) -> test.done()
     a.event { bla: 'test1' }
-
-

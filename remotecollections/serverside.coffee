@@ -53,7 +53,7 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
                 
         # call
         lweb.subscribe { collection: name, call: true, data: true },
-            (msg,reply) => @fcall msg.call, msg.args or [], msg.data, 'somerealm', (err,data) ->
+            (msg,reply,realm) => @fcall msg.call, msg.args or [], msg.data, realm, (err,data) ->
                 reply.end { err: err, data: data }
         
 

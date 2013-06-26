@@ -113,8 +113,8 @@
         collection: name,
         call: true,
         data: true
-      }, function(msg, reply) {
-        return _this.fcall(msg.call, msg.args || [], msg.data, 'somerealm', function(err, data) {
+      }, function(msg, reply, realm) {
+        return _this.fcall(msg.call, msg.args || [], msg.data, realm, function(err, data) {
           return reply.end({
             err: err,
             data: data

@@ -56,20 +56,22 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
             
         @server = io.listen http, log: false # turning off socket.io logging
 
-        # this kinda sucks, I'd like to hook messages on the server level,
-        # not create 4 new callbacks per any new client.. investigate.
+        # this kinda sucks, I'd like to hook messages on the server object level,
+        # not create 4 new callbacks per client.. investigate.
         @server.on 'connection', (client) => 
             id = client.id
             host = client.handshake.address.address
             
             console.log 'got connection from', host, id
+
+            realm = {}
             
             # channels
             client.on 'join', (msg) => @join msg.channel, client
             client.on 'part', (msg) => @part msg.channel, client
             # queries
-            client.on 'query', (msg) => @queryReceive msg, client
-            client.on 'reply', (msg) => @queryReplyReceive msg, client
+            client.on 'query', (msg) => @queryReceive msg, client, realm
+            client.on 'reply', (msg) => @queryReplyReceive msg, client, realm
 
         # just a test channel broadcasts
         ###

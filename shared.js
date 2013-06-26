@@ -94,20 +94,20 @@
   });
 
   queryServer = exports.queryServer = SubscriptionMan2.extend4000({
-    queryReceive: function(msg, client) {
+    queryReceive: function(msg, client, realm) {
       console.log('got query', msg);
       if (!msg.payload || !msg.id) {
         return console.warn('invalid query message received:', msg);
       }
-      return this.event(msg.payload, msg.id, client);
+      return this.event(msg.payload, msg.id, client, realm);
     },
     subscribe: function(pattern, callback) {
       var wrapped;
       if (!callback && pattern.constructor === Function) {
         callback = pattern && (pattern = true);
       }
-      wrapped = function(msg, id, client) {
-        return callback(msg, new Response(id, client));
+      wrapped = function(msg, id, client, realm) {
+        return callback(msg, new Response(id, client), realm);
       };
       return SubscriptionMan2.prototype.subscribe.call(this, pattern, wrapped);
     }

@@ -49,13 +49,13 @@ queryClient = exports.queryClient = Backbone.Model.extend4000
         true
 
 queryServer = exports.queryServer = SubscriptionMan2.extend4000
-    queryReceive: (msg,client) ->
+    queryReceive: (msg,client,realm) ->
         console.log 'got query',msg
         if not msg.payload or not msg.id then return console.warn 'invalid query message received:',msg
-        @event msg.payload, msg.id, client
-                        
+        @event msg.payload, msg.id, client, realm
+    
     subscribe: ( pattern, callback ) ->
         if not callback and pattern.constructor is Function then callback = pattern and pattern = true
-        wrapped = (msg, id, client) -> callback msg, new Response(id,client)                
+        wrapped = (msg, id, client, realm) -> callback msg, new Response(id,client), realm
         SubscriptionMan2::subscribe.call this, pattern, wrapped        
 

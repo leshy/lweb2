@@ -96,10 +96,11 @@
         log: false
       });
       return this.server.on('connection', function(client) {
-        var host, id;
+        var host, id, realm;
         id = client.id;
         host = client.handshake.address.address;
         console.log('got connection from', host, id);
+        realm = {};
         client.on('join', function(msg) {
           return _this.join(msg.channel, client);
         });
@@ -107,10 +108,10 @@
           return _this.part(msg.channel, client);
         });
         client.on('query', function(msg) {
-          return _this.queryReceive(msg, client);
+          return _this.queryReceive(msg, client, realm);
         });
         return client.on('reply', function(msg) {
-          return _this.queryReplyReceive(msg, client);
+          return _this.queryReplyReceive(msg, client, realm);
         });
       });
       /*
