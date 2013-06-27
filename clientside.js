@@ -41,35 +41,7 @@
     }
   });
 
-  ChannelClient = Backbone.Model.extend4000({
-    initialize: function() {
-      return this.channels = {};
-    },
-    channel: function(channelname) {
-      var channel,
-        _this = this;
-      if (channel = this.channels[channelname]) {
-        return channel;
-      }
-      channel = this.channels[channelname] = new Channel({
-        lweb: this,
-        name: channelname
-      });
-      channel.on('del', function() {
-        return delete _this.channels[channelname];
-      });
-      return channel;
-    },
-    channelsubscribe: function(channelname, pattern, callback) {
-      var channel;
-      channel = this.channel(channelname);
-      if (!callback && pattern.constructor === Function) {
-        callback = pattern;
-        pattern = true;
-      }
-      return channel.subscribe(pattern, callback);
-    }
-  });
+  ChannelClient = shared.channelInterface.extend4000({});
 
   lweb = exports.lweb = ChannelClient.extend4000(shared.queryClient, shared.queryServer, {
     initialize: function() {

@@ -22,6 +22,7 @@ Channel = shared.SubscriptionMan2.extend4000
         if _.isEmpty @clients then @del() # garbage collect the channel
     
     broadcast: (msg, exclude) ->
+        @event msg
         _.map @clients, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
         
     del: ->
@@ -40,14 +41,12 @@ ChannelServer = shared.channelInterface.extend4000
 
     join: (channelname,client) ->
         console.log 'join to', channelname
-        if not channel = @channels[channelname]
-            channel = @channels[channelname] = new Channel name: channelname
-            channel.on 'del', => delete @channels[channelname]
-        channel.join client
+        @channel(channelname).join client
 
     part: (channelname,socket) ->
         if not channel = @channels[channelname] then return
         channel.part socket
+
 
 lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, shared.queryServer, ChannelServer,
     initialize: -> 

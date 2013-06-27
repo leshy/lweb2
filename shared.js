@@ -11,6 +11,33 @@
   SubscriptionMan2 = exports.SubscriptionMan2 = require('./subscriptionman2').SubscriptionMan2;
 
   channelInterface = exports.channelInterface = Backbone.Model.extend4000({
+    initialize: function() {
+      return this.channels = {};
+    },
+    channel: function(channelname) {
+      var channel,
+        _this = this;
+      if (channel = this.channels[channelname]) {
+        return channel;
+      }
+      channel = this.channels[channelname] = new Channel({
+        lweb: this,
+        name: channelname
+      });
+      channel.on('del', function() {
+        return delete _this.channels[channelname];
+      });
+      return channel;
+    },
+    channelsubscribe: function(channelname, pattern, callback) {
+      var channel;
+      channel = this.channel(channelname);
+      if (!callback && pattern.constructor === Function) {
+        callback = pattern;
+        pattern = true;
+      }
+      return channel.subscribe(pattern, callback);
+    },
     broadcast: function(channel, message) {
       return true;
     },

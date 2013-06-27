@@ -37,6 +37,7 @@
     },
     broadcast: function(msg, exclude) {
       var _this = this;
+      this.event(msg);
       return _.map(this.clients, function(subscriber) {
         if (subscriber !== exclude) {
           return subscriber.emit(_this.name, msg);
@@ -62,18 +63,8 @@
       return channel.broadcast(msg);
     },
     join: function(channelname, client) {
-      var channel,
-        _this = this;
       console.log('join to', channelname);
-      if (!(channel = this.channels[channelname])) {
-        channel = this.channels[channelname] = new Channel({
-          name: channelname
-        });
-        channel.on('del', function() {
-          return delete _this.channels[channelname];
-        });
-      }
-      return channel.join(client);
+      return this.channel(channelname).join(client);
     },
     part: function(channelname, socket) {
       var channel;

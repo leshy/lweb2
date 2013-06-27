@@ -20,21 +20,8 @@ Channel = exports.Channel = shared.SubscriptionMan2.extend4000
         
     del: -> @part()
 
-ChannelClient = Backbone.Model.extend4000
-    initialize: ->
-        @channels = {}
-        
-    channel: (channelname) ->
-        if channel = @channels[channelname] then return channel
-        channel = @channels[channelname] = new Channel lweb: @, name: channelname
-        channel.on 'del', => delete @channels[channelname]
-        return channel
+ChannelClient = shared.channelInterface.extend4000 {}
 
-    channelsubscribe: (channelname, pattern, callback) ->
-        channel = @channel(channelname)
-        if not callback and pattern.constructor is Function then callback = pattern; pattern = true
-        channel.subscribe pattern, callback
-        
 lweb = exports.lweb = ChannelClient.extend4000 shared.queryClient, shared.queryServer,
     initialize: ->
         window.lweb = @

@@ -90,6 +90,9 @@
       }, function(msg, end) {
         return helpers.cbc(callback, msg.err, msg.data);
       });
+    },
+    subscribeModel: function(id, callback) {
+      return true;
     }
   });
 

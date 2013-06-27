@@ -5,10 +5,26 @@ helpers = require 'helpers'
 SubscriptionMan2 = exports.SubscriptionMan2 = require('./subscriptionman2').SubscriptionMan2
 
 channelInterface = exports.channelInterface = Backbone.Model.extend4000
+    initialize: ->
+        @channels = {}
+
+    channel: (channelname) ->
+        if channel = @channels[channelname] then return channel
+        channel = @channels[channelname] = new Channel lweb: @, name: channelname
+        channel.on 'del', => delete @channels[channelname]
+        return channel
+
+    channelsubscribe: (channelname, pattern, callback) ->
+        channel = @channel(channelname)
+        if not callback and pattern.constructor is Function then callback = pattern; pattern = true
+        channel.subscribe pattern, callback
+
+
     broadcast: (channel,message) -> true
     join: (channel,listener) -> true
     part: (channel,listener) -> true
-    del: -> true
+    del: -> true      
+    
 
 class Response
     constructor: (@id, @client) -> 

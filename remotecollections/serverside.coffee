@@ -1,12 +1,13 @@
 Backbone = require 'backbone4000'
 _ = require 'underscore'
 helpers = require 'helpers'
+Validator = require 'validator2-extras'; v = Validator.v; Select = Validator.Select
 
 SubscriptionMan2 = require('./../subscriptionman2').SubscriptionMan2
 
 collections = require 'collections'
 mongo = require 'collections/serverside/mongodb'
-
+shared = require '../shared'
 callbackMsgEnd = (reply) -> (err,data) -> reply.end err: err, data: data
  
 # a mixin that exposes a collection with a standard interface to lweb messaging layer
@@ -18,9 +19,7 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
         
         # create
         lweb.subscribe { collection: name, create: true },
-            (msg,reply) =>
-                console.log 'create msg received',msg
-                @create msg.create, callbackMsgEnd reply
+            (msg,reply) => @create msg.create, callbackMsgEnd reply
         
         # remove raw
         lweb.subscribe { collection: name, remove: true, raw: true  },
@@ -57,5 +56,39 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
                 reply.end { err: err, data: data }
         
 
-exports.MongoCollection = mongo.MongoCollection.extend4000 CollectionExposer, collections.ReferenceMixin, collections.ModelMixin
+    subscribeModel: (id,callback) ->
+        true
+
+
+# this can be mixed into a RemoteCollection or Collection itself.
+# it provides subscribe and unsubscribe methods for collection events (remove/update/create)
+# 
+# if this is mixed into a collection,
+# remotemodels will automatically subscribe to those events to update themselves with potential remote changes
+SubscriptionMixin = exports.SubscriptionMixin = shared.SubscriptionMan2.extend4000
+    superValidator: v({ create: 'function', update: 'function', remove: 'function' })
+
+    create: (entry,callback) ->
+        @_super 'create', entry, (err,id) =>
+            @event action: 'create', entry: _.extend({id : id}, entry)
+            callback(err,id)
+        
+    update: (pattern,update,callback) ->
+        @_super 'update', pattern, update, callback
+        if pattern.id then @event action: 'update', id: pattern.id, update: update
+        
+    remove: (pattern,callback) ->
+        @_super 'remove', pattern, callback
+        if pattern.id then @event action: 'remove', id: pattern.id
+
+    subscribeModel: (id,callback) ->
+        @subscribe { pattern: { id: id } }, (msg) -> callback(msg)
+        
+    unsubscribeModel: ->
+        true
+
+exports.MongoCollection = mongo.MongoCollection.extend4000 CollectionExposer, collections.ReferenceMixin, collections.ModelMixin, exports.SubscriptionMixin
+
+
+
 
