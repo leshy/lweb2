@@ -48,7 +48,7 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
         lweb.subscribe { collection: name, findOne: true },
             (msg,reply) =>
                 @findOne msg.findOne, (err, entry) =>
-                if entry? then reply.write ({ data: entry, err: undefined }) else reply.end()
+                    if entry? then reply.end ({ data: entry, err: undefined }) else reply.end()
                 
         # call
         lweb.subscribe { collection: name, call: true, data: true },

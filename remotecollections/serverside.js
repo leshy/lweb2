@@ -106,15 +106,16 @@
         collection: name,
         findOne: true
       }, function(msg, reply) {
-        _this.findOne(msg.findOne, function(err, entry) {});
-        if (typeof entry !== "undefined" && entry !== null) {
-          return reply.write({
-            data: entry,
-            err: void 0
-          });
-        } else {
-          return reply.end();
-        }
+        return _this.findOne(msg.findOne, function(err, entry) {
+          if (entry != null) {
+            return reply.end({
+              data: entry,
+              err: void 0
+            });
+          } else {
+            return reply.end();
+          }
+        });
       });
       return lweb.subscribe({
         collection: name,
