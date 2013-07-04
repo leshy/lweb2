@@ -1,15 +1,17 @@
 Validator = require 'validator2-extras'; v = Validator.v; Select = Validator.Select
 Backbone = require 'backbone4000'
 helpers = require 'helpers'
-
+_ = require 'underscore'
 collections = require 'collections'
+
+_.extend exports, shared = require('./shared')
 
 msgCallback = (callback) -> (msg, end) ->
     if not callback then return
     if end then callback msg.err, msg.data
 
 # has the same interface as local collections but it transparently talks to the remote collectionExposer via the messaging system,
-RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collections.ModelMixin, collections.ReferenceMixin, Validator.ValidatedModel,
+RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collections.ModelMixin, shared.SubscriptionMixin, collections.ReferenceMixin, Validator.ValidatedModel,
     validator: v(name: "String", lweb: "Instance")
 
     initialize: ->
@@ -38,5 +40,4 @@ RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collecti
         @lweb.query { collection: @get('name'), call: name, args: args, data: pattern }, (msg,end) ->
             helpers.cbc callback, msg.err, msg.data;
 
-    subscribeModel: (id, callback) ->
-        @lweb.channel(id).subscribe true, (msg) -> callback(msg)
+
