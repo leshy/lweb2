@@ -10,7 +10,7 @@ channelInterface = exports.channelInterface = Backbone.Model.extend4000
 
     channel: (channelname) ->
         if channel = @channels[channelname] then return channel
-        channel = @channels[channelname] = new Channel lweb: @, name: channelname
+        channel = @channels[channelname] = new @ChannelClass lweb: @, name: channelname
         channel.on 'del', => delete @channels[channelname]
         return channel
 

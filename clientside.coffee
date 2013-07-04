@@ -1,3 +1,4 @@
+Validator = require 'validator2-extras'; v = Validator.v; Select = Validator.Select
 Backbone = require 'backbone4000'
 io = require 'socket.io-browserify'
 helpers = require 'helpers'
@@ -8,6 +9,8 @@ _.extend exports, shared = require './shared'
 _.extend exports, collections = require './remotecollections/clientside.coffee'
 
 Channel = exports.Channel = shared.SubscriptionMan2.extend4000
+    validator: v(name: "String", lweb: "Instance")
+
     initialize: ->
         @name = @get 'name' or throw 'channel needs a name'
         @socket = @get('lweb').socket or throw 'channel needs lweb'
@@ -20,7 +23,8 @@ Channel = exports.Channel = shared.SubscriptionMan2.extend4000
         
     del: -> @part()
 
-ChannelClient = shared.channelInterface.extend4000 {}
+ChannelClient = shared.channelInterface.extend4000
+    ChannelClass: Channel
 
 lweb = exports.lweb = ChannelClient.extend4000 shared.queryClient, shared.queryServer,
     initialize: ->

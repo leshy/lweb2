@@ -20,7 +20,7 @@
       if (channel = this.channels[channelname]) {
         return channel;
       }
-      channel = this.channels[channelname] = new Channel({
+      channel = this.channels[channelname] = new this.ChannelClass({
         lweb: this,
         name: channelname
       });

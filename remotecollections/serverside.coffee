@@ -26,8 +26,8 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
             (msg,reply) => @remove msg.remove, callbackMsgEnd reply
         
         # update raw
-        lweb.subscribe { collection: name, update: true, data: true, raw: true },
-            (msg,reply) => @update msg.update, msg.data, callbackMsgEnd reply
+        #lweb.subscribe { collection: name, update: true, data: true, raw: true },
+        #    (msg,reply) => @update msg.update, msg.data, callbackMsgEnd reply
             
         # remove
         lweb.subscribe { collection: name, remove: true },
@@ -36,8 +36,14 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
 
         # update
         lweb.subscribe { collection: name, update: true, data: true },
-            (msg,reply) => @findModels msg.update, {}, (entry) =>
-                if entry? then entry.update(data,'public'); entry.flush() else reply.end()
+            (msg,reply) =>
+                console.log "collection got update request",msg
+                counter = 0
+                @findModels msg.update, {}, (entry) =>
+                    if not entry then return reply.end( updated: counter )
+                    entry.update(msg.data);
+                    entry.flush -> true
+                    counter++
         
         # find
         lweb.subscribe { collection: name, find: true },
@@ -49,7 +55,6 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
             (msg,reply) =>
                 @findOne msg.findOne, (err, entry) =>
                     if entry? then reply.end ({ data: entry, err: undefined }) else reply.end()
-                
         # call
         lweb.subscribe { collection: name, call: true, data: true },
             (msg,reply,realm) => @fcall msg.call, msg.args or [], msg.data, realm, (err,data) ->
@@ -57,7 +62,7 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
         
 
     subscribeModel: (id,callback) ->
-        true
+        @get('lweb').channel(id).subscribe true, (msg) -> callback(msg)
 
 
 # this can be mixed into a RemoteCollection or Collection itself.

@@ -55,14 +55,6 @@
       });
       lweb.subscribe({
         collection: name,
-        update: true,
-        data: true,
-        raw: true
-      }, function(msg, reply) {
-        return _this.update(msg.update, msg.data, callbackMsgEnd(reply));
-      });
-      lweb.subscribe({
-        collection: name,
         remove: true
       }, function(msg, reply) {
         return _this.findModels(msg.remove, {}, function(entry) {
@@ -78,13 +70,20 @@
         update: true,
         data: true
       }, function(msg, reply) {
+        var counter;
+        console.log("collection got update request", msg);
+        counter = 0;
         return _this.findModels(msg.update, {}, function(entry) {
-          if (entry != null) {
-            entry.update(data, 'public');
-            return entry.flush();
-          } else {
-            return reply.end();
+          if (!entry) {
+            return reply.end({
+              updated: counter
+            });
           }
+          entry.update(msg.data);
+          entry.flush(function() {
+            return true;
+          });
+          return counter++;
         });
       });
       lweb.subscribe({
@@ -131,7 +130,9 @@
       });
     },
     subscribeModel: function(id, callback) {
-      return true;
+      return this.get('lweb').channel(id).subscribe(true, function(msg) {
+        return callback(msg);
+      });
     }
   });
 

@@ -51,6 +51,7 @@
   });
 
   ChannelServer = shared.channelInterface.extend4000({
+    ChannelClass: Channel,
     initialize: function() {
       return this.channels = {};
     },

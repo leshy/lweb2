@@ -31,6 +31,8 @@ Channel = shared.SubscriptionMan2.extend4000
 
 # this is the pub/sub core. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.
 ChannelServer = shared.channelInterface.extend4000
+    ChannelClass: Channel
+    
     initialize: ->
         @channels = {}
         

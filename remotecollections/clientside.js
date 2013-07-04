@@ -92,7 +92,9 @@
       });
     },
     subscribeModel: function(id, callback) {
-      return true;
+      return this.lweb.channel(id).subscribe(true, function(msg) {
+        return callback(msg);
+      });
     }
   });
 

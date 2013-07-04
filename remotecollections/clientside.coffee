@@ -38,6 +38,5 @@ RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collecti
         @lweb.query { collection: @get('name'), call: name, args: args, data: pattern }, (msg,end) ->
             helpers.cbc callback, msg.err, msg.data;
 
-
     subscribeModel: (id, callback) ->
-        true
+        @lweb.channel(id).subscribe true, (msg) -> callback(msg)
