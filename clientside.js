@@ -61,15 +61,15 @@
       if (!this.joined) {
         return;
       }
-      this.joined = false;
       console.log('part from', this.name);
       this.socket.emit('part', {
         channel: this.name
       });
-      return this.trigger('del');
+      return this.joined = false;
     },
     del: function() {
-      return this.part();
+      this.part();
+      return this.trigger('del');
     }
   });
 

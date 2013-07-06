@@ -24,7 +24,7 @@
         lweb: this,
         name: channelname
       });
-      channel.on('del', function() {
+      channel.once('del', function() {
         return delete _this.channels[channelname];
       });
       return channel;

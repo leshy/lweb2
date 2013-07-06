@@ -26,17 +26,15 @@ Channel = exports.Channel = shared.SubscriptionMan2.extend4000
         @socket.emit 'join', { channel: @name }        
         @joined = true
         
-
     part: ->
         if not @joined then return
-            
-        @joined = false
         console.log 'part from', @name
         @socket.emit 'part', { channel: @name }
-        @trigger 'del'
-
+        @joined = false
         
-    del: -> @part()
+    del: ->
+        @part()
+        @trigger 'del'
 
 ChannelClient = shared.channelInterface.extend4000
     ChannelClass: Channel
