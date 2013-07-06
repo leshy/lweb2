@@ -42,6 +42,7 @@
         pattern: pattern,
         callback: callback
       };
+      this.trigger('subscribe', name);
       return function() {
         delete _this.subscriptions[name];
         return _this.trigger('unsubscribe', name);

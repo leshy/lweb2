@@ -33,21 +33,35 @@
       this.socket = this.get('lweb').socket || (function() {
         throw 'channel needs lweb';
       })();
-      console.log('join to', this.name);
-      this.socket.emit('join', {
-        channel: this.name
-      });
       this.socket.on(this.name, function(msg) {
         return _this.event(msg);
       });
-      return this.on('unsubscribe', function() {
-        console.log("UNSUB TRIGGER");
+      this.on('unsubscribe', function() {
         if (!_.keys(_this.subscriptions).length) {
           return _this.part();
         }
       });
+      return this.on('subscribe', function() {
+        if (!this.joined) {
+          return this.join();
+        }
+      });
+    },
+    join: function() {
+      if (this.joined) {
+        return;
+      }
+      console.log('join to', this.name);
+      this.socket.emit('join', {
+        channel: this.name
+      });
+      return this.joined = true;
     },
     part: function() {
+      if (!this.joined) {
+        return;
+      }
+      this.joined = false;
       console.log('part from', this.name);
       this.socket.emit('part', {
         channel: this.name

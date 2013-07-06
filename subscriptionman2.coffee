@@ -20,6 +20,8 @@ SubscriptionMan2 = exports.SubscriptionMan2 = SimpleMatcher.extend4000
             pattern = true
 
         @subscriptions[name] = pattern: pattern, callback: callback
+
+        @trigger 'subscribe',name
         
         =>
             delete @subscriptions[name]

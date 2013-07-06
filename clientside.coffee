@@ -14,15 +14,23 @@ Channel = exports.Channel = shared.SubscriptionMan2.extend4000
     initialize: ->
         @name = @get 'name' or throw 'channel needs a name'
         @socket = @get('lweb').socket or throw 'channel needs lweb'
-        console.log 'join to', @name
-        
-        @socket.emit 'join', { channel: @name }
+
         @socket.on @name, (msg) => @event msg
-        @on 'unsubscribe', =>
-            console.log "UNSUB TRIGGER"
-            if not _.keys(@subscriptions).length then @part()
+        
+        @on 'unsubscribe', => if not _.keys(@subscriptions).length then @part()
+        @on 'subscribe', -> if not @joined then @join()
+
+    join: ->
+        if @joined then return
+        console.log 'join to', @name
+        @socket.emit 'join', { channel: @name }        
+        @joined = true
+        
 
     part: ->
+        if not @joined then return
+            
+        @joined = false
         console.log 'part from', @name
         @socket.emit 'part', { channel: @name }
         @trigger 'del'
