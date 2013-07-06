@@ -10,16 +10,25 @@ SimpleMatcher = Backbone.Model.extend4000
             false
 
 SubscriptionMan2 = exports.SubscriptionMan2 = SimpleMatcher.extend4000
-    initialize: -> @subscriptions = []
+    initialize: ->
+        @counter = 0
+        @subscriptions = {}
 
-    subscribe: (pattern,callback,name) ->
+    subscribe: (pattern,callback,name=@counter++) ->
         if not callback and pattern.constructor is Function
             callback = pattern
             pattern = true
-        @subscriptions.push pattern: pattern, callback: callback
+
+        @subscriptions[name] = pattern: pattern, callback: callback
+        
+        =>
+            delete @subscriptions[name]
+            @trigger 'unsubscribe', name
     
     event: (values...) ->
         value = _.first values
-        subscriptions = _.filter @subscriptions, (subscription) => @match value, subscription.pattern
-        _.map subscriptions, (subscription) ->
+        MatchedSubscriptions = _.filter _.values(@subscriptions), (subscription) =>
+            @match value, subscription.pattern
+            
+        _.map MatchedSubscriptions, (subscription) ->
             subscription.callback.apply @, values

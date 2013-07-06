@@ -10,6 +10,8 @@ mongo = require 'collections/serverside/mongodb'
 shared = require '../shared'
 callbackMsgEnd = (reply) -> (err,data) -> reply.end err: err, data: data
 
+#collections.autosubscribe = false
+
 _.extend exports, shared = require('./shared')
  
 # a mixin that exposes a collection with a standard interface to lweb messaging layer

@@ -13,6 +13,7 @@ Channel = shared.SubscriptionMan2.extend4000
         @clients = {}
 
     join: (client) ->
+        console.log 'join to', @name, client.id
         @clients[client.id] = client
         client.on 'disconnect', => @part client
         
@@ -42,7 +43,6 @@ ChannelServer = shared.channelInterface.extend4000
         channel.broadcast msg
 
     join: (channelname,client) ->
-        console.log 'join to', channelname
         @channel(channelname).join client
 
     part: (channelname,socket) ->

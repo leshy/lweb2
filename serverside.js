@@ -23,6 +23,7 @@
     },
     join: function(client) {
       var _this = this;
+      console.log('join to', this.name, client.id);
       this.clients[client.id] = client;
       return client.on('disconnect', function() {
         return _this.part(client);
@@ -64,7 +65,6 @@
       return channel.broadcast(msg);
     },
     join: function(channelname, client) {
-      console.log('join to', channelname);
       return this.channel(channelname).join(client);
     },
     part: function(channelname, socket) {

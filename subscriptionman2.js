@@ -26,27 +26,36 @@
 
   SubscriptionMan2 = exports.SubscriptionMan2 = SimpleMatcher.extend4000({
     initialize: function() {
-      return this.subscriptions = [];
+      this.counter = 0;
+      return this.subscriptions = {};
     },
     subscribe: function(pattern, callback, name) {
+      var _this = this;
+      if (name == null) {
+        name = this.counter++;
+      }
       if (!callback && pattern.constructor === Function) {
         callback = pattern;
         pattern = true;
       }
-      return this.subscriptions.push({
+      this.subscriptions[name] = {
         pattern: pattern,
         callback: callback
-      });
+      };
+      return function() {
+        delete _this.subscriptions[name];
+        return _this.trigger('unsubscribe', name);
+      };
     },
     event: function() {
-      var subscriptions, value, values,
+      var MatchedSubscriptions, value, values,
         _this = this;
       values = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       value = _.first(values);
-      subscriptions = _.filter(this.subscriptions, function(subscription) {
+      MatchedSubscriptions = _.filter(_.values(this.subscriptions), function(subscription) {
         return _this.match(value, subscription.pattern);
       });
-      return _.map(subscriptions, function(subscription) {
+      return _.map(MatchedSubscriptions, function(subscription) {
         return subscription.callback.apply(this, values);
       });
     }

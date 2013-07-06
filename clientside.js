@@ -33,14 +33,22 @@
       this.socket = this.get('lweb').socket || (function() {
         throw 'channel needs lweb';
       })();
+      console.log('join to', this.name);
       this.socket.emit('join', {
         channel: this.name
       });
-      return this.socket.on(this.name, function(msg) {
+      this.socket.on(this.name, function(msg) {
         return _this.event(msg);
+      });
+      return this.on('unsubscribe', function() {
+        console.log("UNSUB TRIGGER");
+        if (!_.keys(_this.subscriptions).length) {
+          return _this.part();
+        }
       });
     },
     part: function() {
+      console.log('part from', this.name);
       this.socket.emit('part', {
         channel: this.name
       });

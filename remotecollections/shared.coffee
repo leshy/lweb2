@@ -1,5 +1,6 @@
 Backbone = require 'backbone4000'
 Validator = require 'validator2-extras'; v = Validator.v; Select = Validator.Select
+_ = require 'underscore'
 
 # this can be mixed into a RemoteCollection or Collection itself.
 # it provides subscribe and unsubscribe methods for collection events (remove/update/create)
@@ -16,8 +17,8 @@ SubscriptionMixin = exports.SubscriptionMixin = Validator.ValidatedModel.extend4
 
     create: (entry,callback) ->
         @_super 'create', entry, (err,id) =>
-            #@event action: 'create', entry: _.extend({id : id}, entry)
-            #callback(err,id)
+            @lweb.broadcast @get('name'), action: 'create', entry: _.extend({id : id}, entry)
+            callback(err,id)
         
     update: (pattern,update,callback) ->
         @_super 'update', pattern, update, callback
@@ -26,7 +27,6 @@ SubscriptionMixin = exports.SubscriptionMixin = Validator.ValidatedModel.extend4
     remove: (pattern,callback) ->
         @_super 'remove', pattern, callback
         if pattern.id then @lweb.broadcast pattern.id { action: 'remove', id: pattern.id }
-
 
     subscribeModel: (id,callback) ->
         @get('lweb').channel(id).subscribe true, (msg) -> callback(msg)
