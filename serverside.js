@@ -93,6 +93,7 @@
         host = client.handshake.address.address;
         console.log('got connection from', host, id);
         realm = {};
+        realm.client = client;
         client.on('join', function(msg) {
           return _this.join(msg.channel, client);
         });

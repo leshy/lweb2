@@ -66,6 +66,7 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
             console.log 'got connection from', host, id
 
             realm = {}
+            realm.client = client
             
             # channels
             client.on 'join', (msg) => @join msg.channel, client
@@ -83,5 +84,4 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
         ###
 
     collection: (name) -> new exports.MongoCollection lweb: @, db: @get('db'), collection: name
-
 

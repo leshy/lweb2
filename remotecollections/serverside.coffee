@@ -10,7 +10,7 @@ mongo = require 'collections/serverside/mongodb'
 shared = require '../shared'
 callbackMsgEnd = (reply) -> (err,data) -> reply.end err: err, data: data
 
-#collections.autosubscribe = false
+collections.settings.autosubscribe = false
 
 _.extend exports, shared = require('./shared')
  
@@ -51,8 +51,9 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
         
         # find
         lweb.subscribe { collection: name, find: true },
-            (msg,reply) => @find msg.find, msg.limits or {}, (entry) =>
-                if entry? then reply.write ({ data: entry, err: undefined }) else reply.end()
+            (msg,reply) => @find msg.find, msg.limits or {},
+                (err,entry) => reply.write ({ data: entry, err: undefined })
+                () => reply.end()
 
         # findOne
         lweb.subscribe { collection: name, findOne: true },

@@ -31,6 +31,8 @@
     };
   };
 
+  collections.settings.autosubscribe = false;
+
   _.extend(exports, shared = require('./shared'));
 
   CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000({
@@ -85,15 +87,13 @@
         collection: name,
         find: true
       }, function(msg, reply) {
-        return _this.find(msg.find, msg.limits || {}, function(entry) {
-          if (entry != null) {
-            return reply.write({
-              data: entry,
-              err: void 0
-            });
-          } else {
-            return reply.end();
-          }
+        return _this.find(msg.find, msg.limits || {}, function(err, entry) {
+          return reply.write({
+            data: entry,
+            err: void 0
+          });
+        }, function() {
+          return reply.end();
         });
       });
       lweb.subscribe({

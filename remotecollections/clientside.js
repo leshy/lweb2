@@ -59,17 +59,17 @@
         raw: true
       }, msgCallback(callback));
     },
-    find: function(pattern, limits, callback) {
+    find: function(pattern, limits, callback, callbackDone) {
       return this.lweb.query({
         collection: this.get('name'),
         find: pattern,
         limits: limits
       }, function(msg, end) {
         if (msg) {
-          callback(msg.data);
+          callback(msg.err, msg.data);
         }
         if (end) {
-          return callback();
+          return helpers.cbc(callbackDone);
         }
       });
     },

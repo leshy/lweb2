@@ -19,12 +19,10 @@ channelInterface = exports.channelInterface = Backbone.Model.extend4000
         if not callback and pattern.constructor is Function then callback = pattern; pattern = true
         channel.subscribe pattern, callback
 
-
     broadcast: (channel,message) -> true
     join: (channel,listener) -> true
     part: (channel,listener) -> true
     del: -> true      
-    
 
 class Response
     constructor: (@id, @client) -> 

@@ -18,7 +18,7 @@
 
   _.extend(exports, shared = require('./shared'));
 
-  _.extend(exports, collections = require('./remotecollections/clientside.coffee'));
+  _.extend(exports, collections = require('./remotecollections/clientside'));
 
   Channel = exports.Channel = shared.SubscriptionMan2.extend4000({
     validator: v({

@@ -27,10 +27,10 @@ RemoteCollection = exports.RemoteCollection = Backbone.Model.extend4000 collecti
     update: (pattern,data,callback) ->
         @lweb.query { collection: @get('name'), update: pattern, data: data, raw: true }, msgCallback callback
     
-    find: (pattern,limits,callback) ->
+    find: (pattern,limits,callback,callbackDone) ->
         @lweb.query { collection: @get('name'), find: pattern, limits: limits }, (msg,end) ->
-            if msg then callback(msg.data)
-            if end then callback()
+            if msg then callback(msg.err, msg.data)
+            if end then helpers.cbc callbackDone
 
     findOne: (pattern,callback) ->
         @lweb.query { collection: @get('name'), findOne: pattern }, (msg,end) ->
