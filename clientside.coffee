@@ -8,7 +8,7 @@ _ = require 'underscore'
 _.extend exports, shared = require './shared'
 _.extend exports, collections = require './remotecollections/clientside'
 
-Channel = exports.Channel = shared.SubscriptionMan2.extend4000
+Channel = exports.Channel = shared.SubscriptionMan.extend4000
     validator: v(name: "String", lweb: "Instance")
 
     initialize: ->
@@ -22,13 +22,13 @@ Channel = exports.Channel = shared.SubscriptionMan2.extend4000
 
     join: ->
         if @joined then return
-        console.log 'join to', @name
+        console.log 'join to', '#' + @name
         @socket.emit 'join', { channel: @name }        
         @joined = true
         
     part: ->
         if not @joined then return
-        console.log 'part from', @name
+        console.log 'part from', '#' + @name
         @socket.emit 'part', { channel: @name }
         @joined = false
         

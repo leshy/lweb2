@@ -32,3 +32,4 @@ SubscriptionMixin = exports.SubscriptionMixin = Validator.ValidatedModel.extend4
         @get('lweb').channel(id).subscribe true, (msg) -> callback(msg)
        
     unsubscribeModel: -> true
+

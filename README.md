@@ -38,8 +38,8 @@ lweb = new require('lweb/serverside').lweb http: env.http
 lweb.subscribe ping: true, (msg,reply) -> reply.end pong: msg.ping + 1
 
 # multi message reply
-# matches messages containing the attribute testattr which is equal to 'hi' and attribute stream which can be anything (expecting number)
-lweb.subscribe testattr: 'hi', stream: true, (msg,reply) ->
+# matches messages containing the attribute testattr which is equal to 'hi' and attribute stream which is the number of replies
+lweb.subscribe testattr: 'hi', stream: 'Number', (msg,reply) ->
     _.count msg.stream, -> reply.write test: new Date.getTime()
     reply.end test: 'done'
 

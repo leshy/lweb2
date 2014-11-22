@@ -7,7 +7,7 @@ _ = require 'underscore'
 _.extend exports, shared = require './shared'
 _.extend exports, collections = require './remotecollections/serverside.coffee'
 
-Channel = shared.SubscriptionMan2.extend4000
+Channel = shared.SubscriptionMan.extend4000
     initialize: () ->
         @name = @get 'name' or throw 'channel needs a name'
         @clients = {}
@@ -30,6 +30,7 @@ Channel = shared.SubscriptionMan2.extend4000
         @clients = {}
         @trigger 'del'
 
+
 # this is the pub/sub core. it should be easy to extend to use zeromq or redis or something if I require horizontal scalability.
 ChannelServer = shared.channelInterface.extend4000
     ChannelClass: Channel
@@ -50,7 +51,7 @@ ChannelServer = shared.channelInterface.extend4000
         channel.part socket
 
 
-lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, shared.queryServer, ChannelServer,
+lweb = exports.lweb = shared.SubscriptionMan.extend4000 shared.queryClient, shared.queryServer, ChannelServer,
     initialize: -> 
         http = @get 'http'        
         if not http then throw "I need http instance in order to listen"
@@ -79,7 +80,7 @@ lweb = exports.lweb = shared.SubscriptionMan2.extend4000 shared.queryClient, sha
         ###
         testyloopy = =>
             @broadcast 'testchannel', ping: helpers.uuid()
-            helpers.sleep 10000, testyloopy            
+            helpers.sleep 10000, testyloopy
         testyloopy()
         ###
 
