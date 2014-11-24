@@ -2,7 +2,7 @@ Backbone = require 'backbone4000'
 _ = require 'underscore'
 helpers = require 'helpers'
 
-SubscriptionMan = exports.SubscriptionMan = require('./subscriptionman2').SubscriptionMan2
+SubscriptionMan = exports.SubscriptionMan = require('subscriptionman2').basic
 
 channelInterface = exports.channelInterface = Backbone.Model.extend4000
     initialize: ->
@@ -67,8 +67,9 @@ queryServer = exports.queryServer = SubscriptionMan.extend4000
 #        console.log 'got query',msg
         if not msg.payload or not msg.id then return console.warn 'invalid query message received:',msg
         @event msg.payload, msg.id, client, realm
+
     
-    subscribe: ( pattern, callback ) ->
+    subscribe: (pattern, callback) ->
         if not callback and pattern.constructor is Function then callback = pattern and pattern = true
         wrapped = (msg, id, client, realm) -> callback msg, new Response(id,client), realm
         SubscriptionMan::subscribe.call @, pattern, wrapped

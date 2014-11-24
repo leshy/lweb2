@@ -8,7 +8,7 @@
 
   helpers = require('helpers');
 
-  SubscriptionMan = exports.SubscriptionMan = require('./subscriptionman2').SubscriptionMan2;
+  SubscriptionMan = exports.SubscriptionMan = require('subscriptionman2').basic;
 
   channelInterface = exports.channelInterface = Backbone.Model.extend4000({
     initialize: function() {

@@ -80,7 +80,9 @@ exports.queryStreamReply = (test) ->
 
 exports.channels = (test) ->
     gimmeEnv (lwebs,lwebc,http,done) ->
-        lwebc.channel('bla').join() # join should have a callback
+        lwebc.channel('bla').join()
+         # join should have a callback, the whole join (channel system) command should work on top of query/reply system
+        # 
         lwebc.channels.bla.subscribe bla: true, (msg) ->
             done test
 
