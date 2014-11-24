@@ -76,6 +76,19 @@ exports.queryStreamReply = (test) ->
                 test.equal total, 97
                 done test
                                     
+
+
+exports.channels = (test) ->
+    gimmeEnv (lwebs,lwebc,http,done) ->
+        lwebc.channel('bla').join() # join should have a callback
+        lwebc.channels.bla.subscribe bla: true, (msg) ->
+            done test
+
+        helpers.wait 50, -> 
+            lwebs.channels.bla.broadcast bla: 3
+
+
+
 exports.basic = (test) ->
     test.done() # this is just a sketch
     return
@@ -101,26 +114,6 @@ exports.basic = (test) ->
     # check login conversation implementation on top of comm5, to see what kind of API would be nice..
     # you were thinking about some kind of reply subclass that could have protocol implementation on top of itself. that sounds good.
     # lets leave this for laters... keep it as simple as possible.
-
-
-exports.db = (test) ->
-    test.done()
-    return
-
-    lwebs = new lwebs.lweb()
-    lwebs.use require('collections-remote/serverside/mongo')
-    lwebs.start()
-
-    lwebc = new lwebc.lweb()
-    lwebc.use require('collections-remote/clientside')
-    lwebc.start()
-    
-    cs = new lwebs.collection('testcollection')
-    cc = new lwebc.collection('testcollection')
-    
-    # .. do queries, comapre results..
-
-    
 
 exports.SimpleSubscriptionMan = (test) ->
     a = new shared.SubscriptionMan()

@@ -139,6 +139,22 @@
     });
   };
 
+  exports.channels = function(test) {
+    return gimmeEnv(function(lwebs, lwebc, http, done) {
+      lwebc.channel('bla').join();
+      lwebc.channels.bla.subscribe({
+        bla: true
+      }, function(msg) {
+        return done(test);
+      });
+      return helpers.wait(50, function() {
+        return lwebs.channels.bla.broadcast({
+          bla: 3
+        });
+      });
+    });
+  };
+
   exports.basic = function(test) {
     var lwebc, lwebs;
     test.done();
@@ -174,20 +190,6 @@
     }, function(err, data) {
       return true;
     });
-  };
-
-  exports.db = function(test) {
-    var cc, cs, lwebc, lwebs;
-    test.done();
-    return;
-    lwebs = new lwebs.lweb();
-    lwebs.use(require('collections-remote/serverside/mongo'));
-    lwebs.start();
-    lwebc = new lwebc.lweb();
-    lwebc.use(require('collections-remote/clientside'));
-    lwebc.start();
-    cs = new lwebs.collection('testcollection');
-    return cc = new lwebc.collection('testcollection');
   };
 
   exports.SimpleSubscriptionMan = function(test) {
