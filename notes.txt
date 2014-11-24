@@ -1,0 +1,29 @@
+### IMMEDIATE TODO
+
+write tests for lweb!
+replace internal subscriptionman with external one
+replace internal collections-remote with external ones
+profit
+
+----
+
+check promises
+
+serverside - lweb - realm - maybe realm should be a clients property thats changed throughout the session? 
+
+serverside - ChannelServer - channels should have some kind of a permission system.. write/read permissions depending on realm.. think about dinamic realm changes vs efficiency and 
+not checking each message, maybe some hook for a joined user - onRealmChange - and tagging user appropriate
+
+shared - queryClient - maybe it should have some kind of an abstraction between websocket itself and communication, maybe I want a generic queries
+maybe I want two query objects depending on the different transport protocols, one for stream protocols one for query/reply protocols in which reply stream being finished is implicit
+
+shared - queryClient - should query return some kind of a stream/promise like object?
+
+definetely test these and check memory usage and garbage collection
+
+think about queries being long lasting and resulting in channel creating/subscription
+
+for collections-remote I need standardized interface towards query/reply type protocols so that I can plugin http or websocket + lweb as a transport protocol.
+
+think about longlasting queries..
+maybe move validator compliation to mongodb query to collections-remote/mongo

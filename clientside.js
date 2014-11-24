@@ -82,8 +82,12 @@
 
   lweb = exports.lweb = ChannelClient.extend4000(shared.queryClient, shared.queryServer, {
     initialize: function() {
-      window.lweb = this;
-      this.socket = io.connect(this.get('host') || "http://" + window.location.host);
+      if (typeof window !== "undefined" && window !== null) {
+        if (typeof window === "function") {
+          window(lweb = this);
+        }
+      }
+      this.socket = io.connect(this.get('host') || "http://" + (typeof window === "function" ? window(typeof location === "function" ? location(host) : void 0) : void 0));
       this.socket.on('query', (function(_this) {
         return function(msg) {
           return _this.queryReceive(msg, _this.socket);

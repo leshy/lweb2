@@ -13,9 +13,18 @@ callbackMsgEnd = (reply) -> (err,data) -> reply.end err: err, data: data
 collections.settings.autosubscribe = false
 
 _.extend exports, shared = require('./shared')
+
+
+CollectionExposer = exports.CollectionExposer = Validator.ValidatedModel.extend4000 SubscriptionMan2,
+    validator:
+        lweb: 'Instance'
+        name: String
+        
+    initialize: ->
+        @get('lweb').subscribe collection: @get('name'), _.bind(@event, @)
  
 # a mixin that exposes a collection with a standard interface to lweb messaging layer
-CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
+CollectionExposer_old = exports.CollectionExposer_old = Backbone.Model.extend4000
     defaults: { name: undefined }
     initialize: ->
         name = @get 'name'
@@ -50,22 +59,21 @@ CollectionExposer = exports.CollectionExposer = Backbone.Model.extend4000
                     counter++
         
         # find
-        lweb.subscribe { collection: name, find: true },
+        lweb.subscribe { collection: name, find: 'Object' },
             (msg,reply) => @find msg.find, msg.limits or {},
                 (err,entry) => reply.write ({ data: entry, err: undefined })
                 () => reply.end()
 
         # findOne
-        lweb.subscribe { collection: name, findOne: true },
+        lweb.subscribe { collection: name, findOne: Object },
             (msg,reply) =>
                 @findOne msg.findOne, (err, entry) =>
                     if entry? then reply.end ({ data: entry, err: undefined }) else reply.end()
+                        
         # call
         lweb.subscribe { collection: name, call: true, data: true },
             (msg,reply,realm) => @fcall msg.call, msg.args or [], msg.data, realm, (err,data) ->
                 reply.end { err: err, data: data }
         
-
-
 exports.MongoCollection = mongo.MongoCollection.extend4000 CollectionExposer, collections.ReferenceMixin, collections.ModelMixin, shared.SubscriptionMixin
 

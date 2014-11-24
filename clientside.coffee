@@ -41,10 +41,11 @@ ChannelClient = shared.channelInterface.extend4000
 
 lweb = exports.lweb = ChannelClient.extend4000 shared.queryClient, shared.queryServer,
     initialize: ->
-        window.lweb = @
-        @socket = io.connect @get('host') or "http://" + window.location.host
+        if window? then window?lweb = @
+        @socket = io.connect @get('host') or "http://" + window?location?host
         @socket.on 'query', (msg) => @queryReceive msg, @socket
         @socket.on 'reply', (msg) => @queryReplyReceive msg, @socket
                         
     collection: (name) -> new exports.RemoteCollection lweb: @, name: name
+
 

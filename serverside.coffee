@@ -5,7 +5,6 @@ _ = require 'underscore'
 
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
-_.extend exports, collections = require './remotecollections/serverside.coffee'
 
 Channel = shared.SubscriptionMan.extend4000
     initialize: () ->
@@ -64,7 +63,7 @@ lweb = exports.lweb = shared.SubscriptionMan.extend4000 shared.queryClient, shar
             id = client.id
             host = client.handshake.address.address
             
-            console.log 'got connection from', host, id
+#            console.log 'got connection from', host, id
 
             realm = {}
             realm.client = client
@@ -83,6 +82,4 @@ lweb = exports.lweb = shared.SubscriptionMan.extend4000 shared.queryClient, shar
             helpers.sleep 10000, testyloopy
         testyloopy()
         ###
-
-    collection: (name) -> new exports.MongoCollection lweb: @, db: @get('db'), collection: name
 

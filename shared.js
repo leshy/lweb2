@@ -96,7 +96,6 @@
     },
     queryReplyReceive: function(msg) {
       var callback;
-      console.log('reply', msg.id, msg.payload);
       if (!(callback = this.queries[msg.id])) {
         return;
       }
@@ -111,7 +110,6 @@
       var id;
       id = helpers.uuid(10);
       this.queries[id] = callback;
-      console.log('query', id, msg);
       this.socket.emit('query', {
         id: id,
         payload: msg
@@ -122,7 +120,6 @@
 
   queryServer = exports.queryServer = SubscriptionMan.extend4000({
     queryReceive: function(msg, client, realm) {
-      console.log('got query', msg);
       if (!msg.payload || !msg.id) {
         return console.warn('invalid query message received:', msg);
       }
