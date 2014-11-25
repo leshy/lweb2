@@ -9,22 +9,25 @@ _.extend exports, shared = require './shared'
 _.extend exports, collections = require './remotecollections/clientside'
 
 Channel = exports.Channel = shared.SubscriptionMan.extend4000
-    validator: v(name: "String", lweb: "Instance")
-
+    validator: v(name: "String", parent: "Instance")
+    
     initialize: ->
-        @name = @get 'name' or throw 'channel needs a name'
-        @socket = @get('lweb').socket or throw 'channel needs lweb'
+        @name = @get 'name'
+        @parent = @get 'parent'
 
-        @socket.on @name, (msg) => @event msg
-        
         @on 'unsubscribe', => if not _.keys(@subscriptions).length then @part()
         @on 'subscribe', -> if not @joined then @join()
 
-    join: ->
+    join: (callback) ->
         if @joined then return
         console.log 'join to', '#' + @name
-        @socket.emit 'join', { channel: @name }        
-        @joined = true
+        @parent.query join: @name, (msg) =>
+            if not msg.err
+                @joined = true
+                @parent.subscribe channel: @name, (msg) => @event msg.msg
+                callback()
+            else
+                callback msg.err
         
     part: ->
         if not @joined then return

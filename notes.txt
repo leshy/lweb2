@@ -1,11 +1,15 @@
-### IMMEDIATE TODO
+* IMMEDIATE
 
-write tests for lweb!
-replace internal subscriptionman with external one
-replace internal collections-remote with external ones
-profit
-
-----
+** DONE write tests for lweb!
+** DONE replace internal subscriptionman with external one
+** TODO make a remote subscription system based on query-replies
+** TODO make query closable and reply cancleable
+** TODO implement reply timeouts? think.
+** TODO make some simple verbosing system
+** TODO make channel system to use the remote subscription system
+** TODO replace internal collections-remote with external one
+** TODO implement query reply timeout
+** TODO profit
 
 check promises
 

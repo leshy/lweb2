@@ -23,20 +23,11 @@
   Channel = exports.Channel = shared.SubscriptionMan.extend4000({
     validator: v({
       name: "String",
-      lweb: "Instance"
+      parent: "Instance"
     }),
     initialize: function() {
-      this.name = this.get('name' || (function() {
-        throw 'channel needs a name';
-      })());
-      this.socket = this.get('lweb').socket || (function() {
-        throw 'channel needs lweb';
-      })();
-      this.socket.on(this.name, (function(_this) {
-        return function(msg) {
-          return _this.event(msg);
-        };
-      })(this));
+      this.name = this.get('name');
+      this.parent = this.get('parent');
       this.on('unsubscribe', (function(_this) {
         return function() {
           if (!_.keys(_this.subscriptions).length) {
@@ -50,15 +41,28 @@
         }
       });
     },
-    join: function() {
+    join: function(callback) {
       if (this.joined) {
         return;
       }
       console.log('join to', '#' + this.name);
-      this.socket.emit('join', {
-        channel: this.name
-      });
-      return this.joined = true;
+      return this.parent.query({
+        join: this.name
+      }, (function(_this) {
+        return function(msg) {
+          if (!msg.err) {
+            _this.joined = true;
+            _this.parent.subscribe({
+              channel: _this.name
+            }, function(msg) {
+              return _this.event(msg.msg);
+            });
+            return callback();
+          } else {
+            return callback(msg.err);
+          }
+        };
+      })(this));
     },
     part: function() {
       if (!this.joined) {

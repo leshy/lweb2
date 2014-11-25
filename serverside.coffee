@@ -2,28 +2,30 @@ io = require 'socket.io'
 Backbone = require 'backbone4000'
 helpers = require 'helpers'
 _ = require 'underscore'
-
+SubscriptionMan = require('subscriptionman2')
 # inherit code common to serverside and clientside
 _.extend exports, shared = require './shared'
 
-Channel = shared.SubscriptionMan.extend4000
+Channel = SubscriptionMan.fancy.extend4000
     initialize: () ->
         @name = @get 'name' or throw 'channel needs a name'
         @clients = {}
 
-    join: (client) ->
+    join: (reply,realm) ->
         console.log 'join to', @name, client.id
-        @clients[client.id] = client
-        client.on 'disconnect', => @part client
+        @clients[reply.id].push = reply
+        reply.on 'cancel' =>
+            @part(reply)
         
-    part: (client) ->
-        console.log 'part from', @name, client.id
-        delete @clients[client.id]
+    part: (reply) ->
+        console.log 'part from', @name, reply.id
+        reply.end()
+        delete @clients[reply.id]
         if _.isEmpty @clients then @del() # garbage collect the channel
     
-    broadcast: (msg, exclude) ->
+    broadcast: (msg) ->
         @event msg
-        _.map @clients, (subscriber) => if subscriber isnt exclude then subscriber.emit(@name, msg)
+        _.map @clients, (reply) => if reply.write msg
         
     del: ->
         @clients = {}
@@ -69,12 +71,16 @@ lweb = exports.lweb = shared.SubscriptionMan.extend4000 shared.queryClient, shar
             realm.client = client
             
             # channels
-            client.on 'join', (msg) => @join msg.channel, client
-            client.on 'part', (msg) => @part msg.channel, client
+            #client.on 'join', (msg) => @join msg.channel, client
+            #client.on 'part', (msg) => @part msg.channel, client
             # queries
             client.on 'query', (msg) => @queryReceive msg, client, realm
             client.on 'reply', (msg) => @queryReplyReceive msg, client, realm
 
+        @subscribe { join: String }, (msg, reply, realm) =>
+            reply.write { joined: msg.join }
+            @channel(msg.join).join reply, realm
+                        
         # just a test channel broadcasts
         ###
         testyloopy = =>
